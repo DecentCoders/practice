@@ -45,8 +45,34 @@
 
 
 # sum of 100 integers
-sum = 0
-for i in range(1,101):
-    sum = sum+i
+# sum = 0
+# for i in range(1,101):
+#     sum = sum+i
     
-print(sum)
+# print(sum)
+
+# finding all positive divisor
+# num = int(input('Enter the number: '))
+# for i in range (1,num+1):
+#     if num%i ==0 :
+#         print(i,end='')
+
+
+
+# prime number checker
+# n = int(input("number:"))
+# for i in range (2,n):
+#     if n%i == 0:
+#         print("its not a prime number")
+#         break 
+# else:
+#         print("its an prime number")
+
+# narcassis number
+n = int(input("Number: "))
+for i in range (n, 1000):
+    a = i//100
+    b = i//10%10
+    c = i % 10
+    if a**3+b**3+c**3==i:
+        print(i,end="")
