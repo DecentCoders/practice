@@ -16,7 +16,16 @@
 
 
 #finding month
-m = int(input("Enter the number of month you want to find: "))
-months = "JanFebMarAprMayJunJulAugSepOctNovDec"
-pos = (m-1)*3
-print('The month is ',months[pos:pos+3])
+# m = int(input("Enter the number of month you want to find: "))
+# months = "JanFebMarAprMayJunJulAugSepOctNovDec"
+# pos = (m-1)*3
+# print('The month is ',months[pos:pos+3])
+
+
+# palindrome checker
+str = input("Enter an word: ")
+if (str==str[::-1]):
+    print(str+' is a palindrome')
+else:
+    print(str+' is not a plindrome')
+    
