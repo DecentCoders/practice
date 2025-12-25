@@ -69,10 +69,24 @@
 #         print("its an prime number")
 
 # narcassis number
+# n = int(input("Number: "))
+# for i in range (n, 1000):
+#     a = i//100
+#     b = i//10%10
+#     c = i % 10
+#     if a**3+b**3+c**3==i:
+#         print(i,end="")
+
+# fibonacci
 n = int(input("Number: "))
-for i in range (n, 1000):
-    a = i//100
-    b = i//10%10
-    c = i % 10
-    if a**3+b**3+c**3==i:
-        print(i,end="")
+x1 = 1
+x2 =1
+count = 2
+print(x1)
+print(x2)
+for i in range(3, n+1):
+    x3=x1+x2
+    print(x3)
+    count+=1
+    x1=x2
+    x2=x3
