@@ -32,13 +32,21 @@
 
 
 # area of a triangle
-import math
-a = float(input('Enter the first Edge: '))
-b = float(input('Enter the second Edge: '))
-c = float(input('Enter the third Edge: '))
-if (a + b > c and a + c > b and b + c > a and a > 0 and b > 0 and c > 0):
-    s = (a + b + c) / 2
-    area = math.sqrt(s * (s - a) * (s - b) * (s - c))
-    print("The area of the triangle {}".format(area))
-else:
-    print("The given edges cant form a triangle...")
+# import math
+# a = float(input('Enter the first Edge: '))
+# b = float(input('Enter the second Edge: '))
+# c = float(input('Enter the third Edge: '))
+# if (a + b > c and a + c > b and b + c > a and a > 0 and b > 0 and c > 0):
+#     s = (a + b + c) / 2
+#     area = math.sqrt(s * (s - a) * (s - b) * (s - c))
+#     print("The area of the triangle {}".format(area))
+# else:
+#     print("The given edges cant form a triangle...")
+
+
+# sum of 100 integers
+sum = 0
+for i in range(1,101):
+    sum = sum+i
+    
+print(sum)
