@@ -1,82 +1,168 @@
 import numpy as np
-from shapely.geometry import Polygon, MultiPolygon
-from shapely.affinity import scale, translate
-from shapely.ops import unary_union
 from stl import mesh
-from matplotlib.textpath import TextPath
-from matplotlib.font_manager import FontProperties
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
-# -------------------------------
-# 1. Heart shape
-# -------------------------------
-t = np.linspace(0, 2*np.pi, 400)
-x = 16 * np.sin(t)**3
-y = 13*np.cos(t) - 5*np.cos(2*t) - 2*np.cos(3*t) - np.cos(4*t)
-heart_poly = Polygon(np.column_stack((x, y)))
-heart_poly = scale(heart_poly, 3, 3)
+# ------------------------------------------------------------------------------
+# Step 1: Define parametric equations for 3D rose petals
+# ------------------------------------------------------------------------------
+def generate_rose_petals(num_petals=20, petal_resolution=50, height_resolution=30):
+    """
+    Generate 3D points and triangular faces for rose petals
+    Based on polar rose curve (r = a*sin(nθ)) extended to 3D with curvature
+    """
+    # Parameters for petal shape (tune these for different rose styles)
+    a = 1.5  # Base radius of petals
+    n = 5    # Petal "lobes" (higher = more detailed)
+    height = 4.0  # Total height of the rose bloom
+    curvature = 0.8  # Petal curvature factor
 
-# -------------------------------
-# 2. Create text geometry
-# -------------------------------
-fp = FontProperties(family="DejaVu Sans", weight="bold")
-tp = TextPath((0, 0), "RATRI", size=10, prop=fp)
+    # Generate parametric coordinates
+    theta = np.linspace(0, 2 * np.pi, num_petals * petal_resolution)
+    phi = np.linspace(0, np.pi/2, height_resolution)
+    theta, phi = np.meshgrid(theta, phi)
 
-polys = []
-for path in tp.to_polygons():
-    if len(path) > 2:
-        polys.append(Polygon(path))
+    # 3D polar rose equation (convert to Cartesian coordinates)
+    r = a * np.sin(n * theta) * np.cos(phi) * curvature
+    x = r * np.cos(theta) * np.sin(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = phi * height  # Height increases with phi
 
-text_poly = unary_union(polys)
+    # Add slight randomness for natural petal shape
+    x += np.random.normal(0, 0.02, x.shape)
+    y += np.random.normal(0, 0.02, y.shape)
+    z += np.random.normal(0, 0.01, z.shape)
 
-# Scale and center text on heart
-text_poly = scale(text_poly, 1.5, 1.5)
-minx, miny, maxx, maxy = text_poly.bounds
-text_poly = translate(text_poly, xoff=-(minx+maxx)/2, yoff=-(miny+maxy)/2 + 10)
+    # Generate triangular faces for the petals
+    faces = []
+    vertices = []
+    vertex_idx = 0
 
-# -------------------------------
-# 3. Extrusion helper
-# -------------------------------
-def extrude(geom, z0, h):
-    verts, faces = [], []
-    def one(poly, off):
-        coords = list(poly.exterior.coords)
-        n = len(coords)
-        for x,y in coords: verts.append([x,y,z0])
-        for x,y in coords: verts.append([x,y,z0+h])
-        for i in range(n-1):
-            faces.append([off+i, off+i+1, off+n+i])
-            faces.append([off+i+1, off+n+i+1, off+n+i])
-        for i in range(1,n-2):
-            faces.append([off, off+i, off+i+1])
-            faces.append([off+n, off+n+i, off+n+i+1])
-        return 2*n
+    # Flatten vertices and create triangular mesh
+    for i in range(height_resolution - 1):
+        for j in range(num_petals * petal_resolution - 1):
+            # Collect 4 vertices of a quad (split into 2 triangles)
+            v1 = (x[i,j], y[i,j], z[i,j])
+            v2 = (x[i+1,j], y[i+1,j], z[i+1,j])
+            v3 = (x[i+1,j+1], y[i+1,j+1], z[i+1,j+1])
+            v4 = (x[i,j+1], y[i,j+1], z[i,j+1])
+            
+            vertices.extend([v1, v2, v3, v4])
+            
+            # Add two triangles per quad
+            faces.append([vertex_idx, vertex_idx+1, vertex_idx+2])
+            faces.append([vertex_idx, vertex_idx+2, vertex_idx+3])
+            vertex_idx += 4
 
-    offset = 0
-    if isinstance(geom, Polygon):
-        offset += one(geom, offset)
-    elif isinstance(geom, MultiPolygon):
-        for g in geom.geoms:
-            offset += one(g, offset)
+    return np.array(vertices), np.array(faces)
 
-    return np.array(verts), np.array(faces)
+# ------------------------------------------------------------------------------
+# Step 2: Generate cylindrical stem
+# ------------------------------------------------------------------------------
+def generate_stem(stem_height=8, stem_radius=0.3, resolution=20):
+    """Generate 3D points/faces for a cylindrical stem"""
+    theta = np.linspace(0, 2 * np.pi, resolution)
+    z = np.linspace(-stem_height, 0, resolution)
+    theta, z = np.meshgrid(theta, z)
 
-# -------------------------------
-# 4. Build mesh
-# -------------------------------
-hv, hf = extrude(heart_poly, 0, 4)
-tv, tf = extrude(text_poly, 4, 2)
-tf += len(hv)
+    # Cylinder coordinates
+    x = stem_radius * np.cos(theta)
+    y = stem_radius * np.sin(theta)
 
-verts = np.vstack([hv, tv])
-faces = np.vstack([hf, tf])
+    # Generate faces
+    faces = []
+    vertices = []
+    vertex_idx = 0
 
-# -------------------------------
-# 5. Save STL
-# -------------------------------
-m = mesh.Mesh(np.zeros(len(faces), dtype=mesh.Mesh.dtype))
-for i,f in enumerate(faces):
-    for j in range(3):
-        m.vectors[i][j] = verts[f[j]]
+    for i in range(resolution - 1):
+        for j in range(resolution - 1):
+            v1 = (x[i,j], y[i,j], z[i,j])
+            v2 = (x[i+1,j], y[i+1,j], z[i+1,j])
+            v3 = (x[i+1,j+1], y[i+1,j+1], z[i+1,j+1])
+            v4 = (x[i,j+1], y[i,j+1], z[i,j+1])
+            
+            vertices.extend([v1, v2, v3, v4])
+            
+            faces.append([vertex_idx, vertex_idx+1, vertex_idx+2])
+            faces.append([vertex_idx, vertex_idx+2, vertex_idx+3])
+            vertex_idx += 4
 
-m.save("heart_ratri_raised.stl")
-print("Saved heart_ratri_raised.stl")
+    # Add stem bottom cap (closed cylinder)
+    cap_center = (0, 0, -stem_height)
+    vertices.append(cap_center)
+    cap_idx = vertex_idx
+    vertex_idx += 1
+
+    # Append all edge vertices for the cap first
+    edge_start_idx = vertex_idx
+    for j in range(resolution - 1):
+        v_edge = (x[0, j], y[0, j], z[0, j])
+        vertices.append(v_edge)
+        vertex_idx += 1
+
+    # Create triangular fan faces from center to edge vertices
+    num_edges = resolution - 1
+    for j in range(num_edges):
+        v_curr = edge_start_idx + j
+        v_next = edge_start_idx + ((j + 1) % num_edges)
+        faces.append([cap_idx, v_curr, v_next])
+
+    return np.array(vertices), np.array(faces)
+
+# ------------------------------------------------------------------------------
+# Step 3: Combine all parts and generate STL
+# ------------------------------------------------------------------------------
+def create_rose_stl(output_filename="3d_rose.stl"):
+    # Generate individual parts
+    petal_vertices, petal_faces = generate_rose_petals()
+    stem_vertices, stem_faces = generate_stem()
+
+    # Adjust stem face indices (offset by petal vertex count)
+    stem_faces += len(petal_vertices)
+
+    # Combine vertices and faces
+    all_vertices = np.vstack([petal_vertices, stem_vertices])
+    all_faces = np.vstack([petal_faces, stem_faces])
+
+    # Create STL mesh object
+    rose_mesh = mesh.Mesh(np.zeros(all_faces.shape[0], dtype=mesh.Mesh.dtype))
+    for i, face in enumerate(all_faces):
+        for j in range(3):
+            rose_mesh.vectors[i][j] = all_vertices[face[j], :]
+
+    # Save STL file
+    rose_mesh.save(output_filename)
+    print(f"STL file saved as: {output_filename}")
+
+    return all_vertices, all_faces
+
+# ------------------------------------------------------------------------------
+# Step 4: Visualize 3D rose (matplotlib preview)
+# ------------------------------------------------------------------------------
+def visualize_rose(vertices):
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Plot vertices (points)
+    ax.scatter(vertices[:,0], vertices[:,1], vertices[:,2], 
+               c=vertices[:,2], cmap="RdYlGn", s=1, alpha=0.8)
+
+    # Set axis labels and title
+    ax.set_xlabel('X (cm)')
+    ax.set_ylabel('Y (cm)')
+    ax.set_zlabel('Z (cm)')
+    ax.set_title('3D Rose Model Preview')
+
+    # Equal aspect ratio for realistic view
+    ax.set_aspect('equal')
+    plt.show()
+
+# ------------------------------------------------------------------------------
+# Main execution
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
+    # Generate STL file
+    vertices, faces = create_rose_stl()
+    
+    # Preview the 3D model
+    visualize_rose(vertices)
