@@ -1,173 +1,171 @@
 import numpy as np
 from stl import mesh
 
-# -------------------------- PARAMETRIC SETTINGS (EASY TO ADJUST) --------------------------
-# Core plate dimensions (tweak these for bigger/smaller name plate)
-PLATE_WIDTH = 4.0          # Total width of name plate (4 inches)
-PLATE_HEIGHT = 2.0         # Total height of name plate (2 inches)
-PLATE_THICKNESS = 0.2      # Base thickness (0.2 inches, sturdy)
-LETTER_HEIGHT = 0.15       # Height of raised "SARA" letters (0.15 inches, visible)
-LETTER_WIDTH_SCALE = 0.8   # Scale for letter width (0.8 = proportional)
+# --------------------------
+# PARAMETERS (EASY TO ADJUST)
+# --------------------------
+plate_width = 80    # mm
+plate_height = 40   # mm
+plate_thickness = 5 # mm
+stand_height = 20   # mm
+stand_thickness = 5 # mm
+letter_height = 15  # mm
+letter_width = 8    # mm
+letter_depth = 3    # mm (protrusion from plate)
+gap_between_letters = 3 # mm
 
-# Stand parameters (adjust angle/height for stability)
-STAND_ANGLE = 30           # Angle of the stand (30°, no supports needed)
-STAND_HEIGHT = 1.5         # Height of the stand (1.5 inches, stable)
-STAND_THICKNESS = 0.3      # Thickness of stand (0.3 inches, no bending)
+# --------------------------
+# HELPER FUNCTION: CREATE A CUBE
+# --------------------------
+def create_cube(x0, y0, z0, dx, dy, dz):
+    """
+    Create a 3D cube mesh with:
+    - Origin at (x0, y0, z0)
+    - Dimensions (dx=width, dy=height, dz=depth)
+    """
+    # Define the 8 vertices of the cube
+    vertices = np.array([
+        [x0, y0, z0],          # 0
+        [x0+dx, y0, z0],       # 1
+        [x0+dx, y0+dy, z0],    # 2
+        [x0, y0+dy, z0],       # 3
+        [x0, y0, z0+dz],       # 4
+        [x0+dx, y0, z0+dz],    # 5
+        [x0+dx, y0+dy, z0+dz], # 6
+        [x0, y0+dy, z0+dz]     # 7
+    ])
 
-# -------------------------- HELPER FUNCTION: GENERATE LETTER SHAPES (SARA) --------------------------
-def generate_letter_S(center_x, center_y, height, width_scale):
-    """Generate 2D points for letter S (parametric, print-friendly)"""
-    s_points = []
-    # S curves (2 half-circles + straight edges)
-    radius = height/4 * width_scale
-    # Top curve (right half-circle)
-    angles = np.linspace(np.pi/2, 3*np.pi/2, 10)
-    for a in angles:
-        x = center_x + radius * np.cos(a) + radius
-        y = center_y + height/2 - radius + radius * np.sin(a)
-        s_points.append([x, y])
-    # Middle straight
-    s_points.append([center_x - radius, center_y])
-    # Bottom curve (left half-circle)
-    angles = np.linspace(3*np.pi/2, 5*np.pi/2, 10)
-    for a in angles:
-        x = center_x + radius * np.cos(a) - radius
-        y = center_y - height/2 + radius + radius * np.sin(a)
-        s_points.append([x, y])
-    return s_points
+    # Define the 12 triangles (each face has 2 triangles)
+    faces = np.array([
+        [0,3,1], [1,3,2], # Bottom face
+        [0,4,7], [0,7,3], # Left face
+        [1,2,6], [1,6,5], # Right face
+        [3,7,6], [3,6,2], # Top face
+        [0,1,5], [0,5,4], # Front face
+        [4,5,6], [4,6,7]  # Back face
+    ])
 
-def generate_letter_A(center_x, center_y, height, width_scale):
-    """Generate 2D points for letter A (parametric, print-friendly)"""
-    a_points = []
-    # A shape (triangle + crossbar)
-    width = height * width_scale
-    # Top peak
-    a_points.append([center_x, center_y + height/2])
-    # Left leg
-    a_points.append([center_x - width/2, center_y - height/2])
-    # Crossbar
-    a_points.append([center_x - width/3, center_y - height/6])
-    a_points.append([center_x + width/3, center_y - height/6])
-    # Right leg
-    a_points.append([center_x + width/2, center_y - height/2])
-    return a_points
+    # Create the mesh object
+    cube_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
+    for i, face in enumerate(faces):
+        for j in range(3):
+            cube_mesh.vectors[i][j] = vertices[face[j]]
+    return cube_mesh
 
-# -------------------------- GENERATE VERTICES (PARAMETRIC + CLEAR SHAPES) --------------------------
-vertices = []
+# --------------------------
+# STEP 1: CREATE THE NAME PLATE BASE
+# --------------------------
+# Plate is centered at (0,0,0) for easy alignment
+plate = create_cube(
+    x0 = -plate_width/2,
+    y0 = 0,
+    z0 = 0,
+    dx = plate_width,
+    dy = plate_height,
+    dz = plate_thickness
+)
 
-# 1. Base Name Plate (rectangular, stable)
-# Plate corners (parametric size)
-plate_corners = [
-    (-PLATE_WIDTH/2, -PLATE_HEIGHT/2), (PLATE_WIDTH/2, -PLATE_HEIGHT/2),
-    (PLATE_WIDTH/2, PLATE_HEIGHT/2), (-PLATE_WIDTH/2, PLATE_HEIGHT/2)
-]
-for (x, y) in plate_corners:
-    # Plate bottom (z=0)
-    vertices.append([x, y, 0.0])
-    # Plate top (z=PLATE_THICKNESS)
-    vertices.append([x, y, PLATE_THICKNESS])
-plate_count = len(vertices)  # Track: 8 vertices (4 corners * 2)
+# --------------------------
+# STEP 2: CREATE THE STAND
+# --------------------------
+# Stand is a tilted cube at the back of the plate (for stability)
+stand = create_cube(
+    x0 = -plate_width/2,
+    y0 = plate_height - stand_thickness,
+    z0 = 0,
+    dx = plate_width,
+    dy = stand_thickness,
+    dz = stand_height
+)
 
-# 2. Raised Letters "SARA" (parametric, centered on plate)
-letter_verts = []
-# Letter positions (centered, evenly spaced)
-letter_spacing = PLATE_WIDTH / 5
-letter_centers_x = [
-    -1.5*letter_spacing,  # S
-    -0.5*letter_spacing,  # A
-    0.5*letter_spacing,   # R (simplified to A shape for print-friendliness)
-    1.5*letter_spacing    # A
-]
+# Tilt the stand (rotate around X-axis for angled support)
+theta = np.radians(45)  # 45-degree tilt
+rotation_matrix = np.array([
+    [1, 0, 0],
+    [0, np.cos(theta), -np.sin(theta)],
+    [0, np.sin(theta), np.cos(theta)]
+])
 
-# Generate each letter (S, A, R=A, A)
-for i, cx in enumerate(letter_centers_x):
-    if i == 0:  # S
-        letter_points = generate_letter_S(cx, 0, LETTER_HEIGHT*8, LETTER_WIDTH_SCALE)
-    else:       # A/R (R simplified to A for print-friendliness)
-        letter_points = generate_letter_A(cx, 0, LETTER_HEIGHT*8, LETTER_WIDTH_SCALE)
-    
-    # Convert 2D letter points to 3D (raised above plate)
-    for (x, y) in letter_points:
-        # Letter base (z=PLATE_THICKNESS)
-        letter_verts.append([x, y, PLATE_THICKNESS])
-        # Letter top (z=PLATE_THICKNESS + LETTER_HEIGHT)
-        letter_verts.append([x, y, PLATE_THICKNESS + LETTER_HEIGHT])
-vertices.extend(letter_verts)
-letter_count = len(letter_verts)  # Track: ~80 vertices (4 letters)
-
-# 3. Integrated Stand (parametric angle/height, stable)
-stand_verts = []
-# Stand base (connects to name plate back)
-stand_back_y = -PLATE_HEIGHT/2
-# Stand bottom (on build plate)
-stand_bottom_x = np.linspace(-PLATE_WIDTH/2, PLATE_WIDTH/2, 8)
-stand_angle_rad = np.radians(STAND_ANGLE)
-for x in stand_bottom_x:
-    # Stand bottom (z=0)
-    stand_verts.append([x, stand_back_y - STAND_HEIGHT * np.cos(stand_angle_rad), 0.0])
-    # Stand top (connects to plate back, z=PLATE_THICKNESS)
-    stand_verts.append([x, stand_back_y, PLATE_THICKNESS])
-vertices.extend(stand_verts)
-stand_count = len(stand_verts)  # Track: 16 vertices (8 points * 2)
-
-# Convert to NumPy array (total: 8+80+16=104 → valid indices 0-103)
-vertices = np.array(vertices)
-
-# -------------------------- DEFINE FACES (SINGLE-PIECE, NO ERRORS) --------------------------
-faces = []
-plate_start = 0
-letter_start = plate_count  # 8
-stand_start = letter_start + letter_count  # ~88
-
-# --- 1. Name Plate Faces (solid base) ---
-for i in range(4):
-    next_i = (i+1) % 4
-    # Plate bottom
-    faces.append([plate_start + 2*i, plate_start + 2*next_i, plate_start + 2*next_i + 1])
-    faces.append([plate_start + 2*i, plate_start + 2*next_i + 1, plate_start + 2*i + 1])
-    # Plate walls
-    faces.append([plate_start + 2*i, plate_start + 2*i + 1, plate_start + 2*next_i + 1])
-    faces.append([plate_start + 2*i, plate_start + 2*next_i + 1, plate_start + 2*next_i])
-
-# --- 2. Raised Letters "SARA" (clear, visible) ---
-for i in range(len(letter_verts)//2 - 1):
-    v1 = letter_start + 2*i
-    v2 = letter_start + 2*(i+1)
-    v3 = letter_start + 2*(i+1) + 1
-    v4 = letter_start + 2*i + 1
-    # Letter top/bottom
-    faces.append([v1, v2, v3])
-    faces.append([v1, v3, v4])
-    # Letter walls (connect to plate)
-    faces.append([v1, v4, plate_start + 1])
-    faces.append([v1, plate_start + 1, v2])
-
-# --- 3. Integrated Stand (stable, no supports) ---
-for i in range(len(stand_verts)//2 - 1):
-    v1 = stand_start + 2*i
-    v2 = stand_start + 2*(i+1)
-    v3 = stand_start + 2*(i+1) + 1
-    v4 = stand_start + 2*i + 1
-    # Stand walls
-    faces.append([v1, v2, v3])
-    faces.append([v1, v3, v4])
-    # Connect stand to plate
-    faces.append([v4, v3, plate_start + 1])
-    faces.append([v4, plate_start + 1, plate_start + 3])
-
-# Convert faces to NumPy array
-faces = np.array(faces)
-
-# -------------------------- GENERATE STL (PARAMETRIC SARA NAME PLATE) --------------------------
-nameplate_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
-for i, face in enumerate(faces):
+# Apply rotation to stand vertices
+for i in range(len(stand.vectors)):
     for j in range(3):
-        nameplate_mesh.vectors[i][j] = vertices[face[j]]
+        stand.vectors[i][j] = np.dot(rotation_matrix, stand.vectors[i][j])
 
-# Save STL (parametric SARA name plate)
-nameplate_mesh.save('parametric_sara_name_plate.stl')
+# --------------------------
+# STEP 3: CREATE LETTERS "SARA"
+# --------------------------
+# Calculate starting X position to center the name on the plate
+total_letter_width = 4*letter_width + 3*gap_between_letters
+start_x = -total_letter_width/2
 
-print("✅ Parametric SARA Name Plate STL saved: parametric_sara_name_plate.stl")
-print(f"📏 Plate Size: {PLATE_WIDTH}\"x{PLATE_HEIGHT}\" (adjust via PLATE_WIDTH/HEIGHT)")
-print(f"🔑 Stand Angle: {STAND_ANGLE}° (stable, no supports needed)")
-print(f"💬 Letter Height: {LETTER_HEIGHT}\" (raised, clear visibility)")
+# Y position (center vertically on the plate)
+start_y = plate_height/2 - letter_height/2
+
+# Z position (protrude from the plate)
+start_z = plate_thickness
+
+# Helper: Create letter S (built from 3 cubes)
+def create_S(x, y, z):
+    s_parts = []
+    # Top horizontal part of S
+    s_parts.append(create_cube(x, y+letter_height*2/3, z, letter_width, letter_height/3, letter_depth))
+    # Middle vertical part of S
+    s_parts.append(create_cube(x+letter_width*2/3, y+letter_height/3, z, letter_width/3, letter_height/3, letter_depth))
+    # Bottom horizontal part of S
+    s_parts.append(create_cube(x, y, z, letter_width, letter_height/3, letter_depth))
+    return np.concatenate([part.data for part in s_parts])
+
+# Helper: Create letter A (built from 3 cubes)
+def create_A(x, y, z):
+    a_parts = []
+    # Left side of A
+    a_parts.append(create_cube(x, y, z, letter_width/3, letter_height, letter_depth))
+    # Right side of A
+    a_parts.append(create_cube(x+letter_width*2/3, y, z, letter_width/3, letter_height, letter_depth))
+    # Crossbar of A
+    a_parts.append(create_cube(x+letter_width/6, y+letter_height/2, z, letter_width*2/3, letter_height/6, letter_depth))
+    return np.concatenate([part.data for part in a_parts])
+
+# Helper: Create letter R (built from 3 cubes)
+def create_R(x, y, z):
+    r_parts = []
+    # Vertical part of R
+    r_parts.append(create_cube(x, y, z, letter_width/3, letter_height, letter_depth))
+    # Top horizontal part of R
+    r_parts.append(create_cube(x+letter_width/3, y+letter_height*2/3, z, letter_width*2/3, letter_height/3, letter_depth))
+    # Diagonal part of R
+    r_parts.append(create_cube(x+letter_width/3, y+letter_height/3, z, letter_width*2/3, letter_height/3, letter_depth))
+    return np.concatenate([part.data for part in r_parts])
+
+# Build each letter and position them
+letters = []
+
+# Letter S
+s_mesh = mesh.Mesh(create_S(start_x, start_y, start_z))
+letters.append(s_mesh)
+
+# Letter A (next to S)
+a1_mesh = mesh.Mesh(create_A(start_x + letter_width + gap_between_letters, start_y, start_z))
+letters.append(a1_mesh)
+
+# Letter R (next to A)
+r_mesh = mesh.Mesh(create_R(start_x + 2*letter_width + 2*gap_between_letters, start_y, start_z))
+letters.append(r_mesh)
+
+# Letter A (next to R)
+a2_mesh = mesh.Mesh(create_A(start_x + 3*letter_width + 3*gap_between_letters, start_y, start_z))
+letters.append(a2_mesh)
+
+# --------------------------
+# STEP 4: MERGE ALL PARTS
+# --------------------------
+# Combine plate, stand, and letters into one mesh
+all_parts = [plate, stand] + letters
+combined_data = np.concatenate([part.data for part in all_parts])
+final_mesh = mesh.Mesh(combined_data)
+
+# --------------------------
+# STEP 5: SAVE STL FILE
+# --------------------------
+final_mesh.save('Sara_Name_Plate.stl')
+print("STL file 'Sara_Name_Plate.stl' generated successfully!")
