@@ -78,15 +78,15 @@
 #         print(i,end="")
 
 # fibonacci
-n = int(input("Number: "))
-x1 = 1
-x2 =1
-count = 2
-print(x1)
-print(x2)
-for i in range(3, n+1):
-    x3=x1+x2
-    print(x3)
-    count+=1
-    x1=x2
-    x2=x3
+# n = int(input("Number: "))
+# x1 = 1
+# x2 =1
+# count = 2
+# print(x1)
+# print(x2)
+# for i in range(3, n+1):
+#     x3=x1+x2
+#     print(x3)
+#     count+=1
+#     x1=x2
+#     x2=x3
