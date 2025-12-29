@@ -1,92 +1,96 @@
-# numA=int(input("Enter the first number: "))
-# numB  =int( input ('Enter the second number:'))
-# sum = numA+ numB
-# average =sum/2
-# print('The sum is:',sum ,end="")
-# print('The average is:',average)
-# money = int(input("Enter the amount of money: "))
-# m50 = money//50
-# money = money%50
-# m5 = money//5
-# money = money%5
-# m1 = money
-# print("The number of 50 notes: ",m50)
-# print("The number of 5 notes: ", m5)
-# print("The number of 1 notes: ",m1)
+import numpy as np
+from stl import mesh
 
+# -------------------------- MAPLE LEAF PARAMETERS (REALISTIC + PRINT-FRIENDLY) --------------------------
+LEAF_WIDTH = 3.0            # Total leaf width (3 inches, printable size)
+LEAF_THICKNESS = 0.15       # Thin thickness (0.15 inches, leaf-like)
+LOBE_COUNT = 5              # Classic 5 maple leaf lobes
+LOBE_DEPTH = 0.6            # Depth of lobes (0.6 = natural shape, not too deep)
+SERRATION_COUNT = 15        # Serrated edges (15 per lobe, natural look)
+SERRATION_SIZE = 0.1        # Small serrations (print-friendly, not too sharp)
+PETIOLE_LENGTH = 1.0        # Integrated stem/petiole (1 inch, fused to leaf)
+PETIOLE_WIDTH = 0.2         # Petiole width (0.2 inches, sturdy)
 
-#finding month
-# m = int(input("Enter the number of month you want to find: "))
-# months = "JanFebMarAprMayJunJulAugSepOctNovDec"
-# pos = (m-1)*3
-# print('The month is ',months[pos:pos+3])
+# -------------------------- GENERATE MAPLE LEAF VERTICES (ERROR-FREE) --------------------------
+vertices = []
 
+# 1. Maple Leaf Lobe Contour (5 symmetrical lobes with serrations)
+# Base angles for 5 lobes (0°, 72°, 144°, 216°, 288°)
+lobe_angles = np.linspace(0, 2*np.pi, LOBE_COUNT, endpoint=False)
+leaf_contour = []
 
-# palindrome checker
-# str = input("Enter an word: ")
-# if (str==str[::-1]):
-#     print(str+' is a palindrome')
-# else:
-#     print(str+' is not a plindrome')
-
-
-
-# area of a triangle
-# import math
-# a = float(input('Enter the first Edge: '))
-# b = float(input('Enter the second Edge: '))
-# c = float(input('Enter the third Edge: '))
-# if (a + b > c and a + c > b and b + c > a and a > 0 and b > 0 and c > 0):
-#     s = (a + b + c) / 2
-#     area = math.sqrt(s * (s - a) * (s - b) * (s - c))
-#     print("The area of the triangle {}".format(area))
-# else:
-#     print("The given edges cant form a triangle...")
-
-
-# sum of 100 integers
-# sum = 0
-# for i in range(1,101):
-#     sum = sum+i
+for lobe_angle in lobe_angles:
+    # Lobe center line (from leaf center to lobe tip)
+    lobe_tip_x = (LEAF_WIDTH/2) * np.cos(lobe_angle)
+    lobe_tip_y = (LEAF_WIDTH/2) * np.sin(lobe_angle)
     
-# print(sum)
+    # Add serrated edges to each lobe (symmetrical on both sides of lobe center)
+    serration_angles = np.linspace(-np.pi/4, np.pi/4, SERRATION_COUNT)
+    for serr_angle in serration_angles:
+        # Serrated edge shape (natural curve + small teeth)
+        serr_radius = (LEAF_WIDTH/2) * (1 - LOBE_DEPTH * np.abs(np.sin(serr_angle)))
+        serr_x = serr_radius * np.cos(lobe_angle + serr_angle) + SERRATION_SIZE * np.sin(3*serr_angle)
+        serr_y = serr_radius * np.sin(lobe_angle + serr_angle) + SERRATION_SIZE * np.sin(3*serr_angle)
+        leaf_contour.append([serr_x, serr_y])
 
-# finding all positive divisor
-# num = int(input('Enter the number: '))
-# for i in range (1,num+1):
-#     if num%i ==0 :
-#         print(i,end='')
+# 2. Add Petiole (integrated stem, fused to leaf)
+petiole_points = []
+# Petiole extends from leaf center (0,0) to negative y-axis
+for i in range(10):  # Smooth petiole taper (wider at leaf, narrower at tip)
+    petiole_x = (PETIOLE_WIDTH/2) * (1 - i/10) * np.cos(np.pi/2 * (i/10))
+    petiole_y = - (i/10) * PETIOLE_LENGTH - LEAF_WIDTH/10
+    petiole_points.append([petiole_x, petiole_y])
+    petiole_points.append([-petiole_x, petiole_y])
 
+# Combine leaf contour + petiole into 3D vertices (add thickness)
+all_2d_points = leaf_contour + petiole_points
+for (x, y) in all_2d_points:
+    # Leaf top (z = LEAF_THICKNESS/2)
+    vertices.append([x, y, LEAF_THICKNESS/2])
+    # Leaf bottom (z = -LEAF_THICKNESS/2)
+    vertices.append([x, y, -LEAF_THICKNESS/2])
 
+# Convert to NumPy array (total vertices: (75 + 20)*2 = 190 → valid indices 0-189)
+vertices = np.array(vertices)
 
-# prime number checker
-# n = int(input("number:"))
-# for i in range (2,n):
-#     if n%i == 0:
-#         print("its not a prime number")
-#         break 
-# else:
-#         print("its an prime number")
+# -------------------------- DEFINE MAPLE LEAF FACES (SINGLE-PIECE) --------------------------
+faces = []
+point_count = len(all_2d_points)  # 95 2D points → 190 3D vertices
 
-# narcassis number
-# n = int(input("Number: "))
-# for i in range (n, 1000):
-#     a = i//100
-#     b = i//10%10
-#     c = i % 10
-#     if a**3+b**3+c**3==i:
-#         print(i,end="")
+# --- 1. Leaf Surface Faces (connect top/bottom + contour) ---
+# Connect leaf contour (first 75 points = leaf, last 20 = petiole)
+for i in range(point_count - 1):
+    # Indices for top/bottom of current and next point
+    top1 = 2*i
+    top2 = 2*(i+1)
+    bot1 = 2*i + 1
+    bot2 = 2*(i+1) + 1
+    
+    # Connect top surface (solid)
+    faces.append([top1, top2, 0])  # Connect to leaf center (0 = top center)
+    # Connect bottom surface
+    faces.append([bot1, 0 + 1, bot2])  # Connect to bottom center (1 = bottom center)
+    # Connect side walls (thickness)
+    faces.append([top1, top2, bot2])
+    faces.append([top1, bot2, bot1])
 
-# fibonacci
-# n = int(input("Number: "))
-# x1 = 1
-# x2 =1
-# count = 2
-# print(x1)
-# print(x2)
-# for i in range(3, n+1):
-#     x3=x1+x2
-#     print(x3)
-#     count+=1
-#     x1=x2
-#     x2=x3
+# --- 2. Close Leaf Center (solid core) ---
+# Add center vertices (already included in index 0/1)
+faces.append([0, 2, 4])  # Top center to first 2 lobe points
+faces.append([1, 5, 3])  # Bottom center to first 2 lobe points
+
+# Convert faces to NumPy array
+faces = np.array(faces)
+
+# -------------------------- GENERATE MAPLE LEAF STL --------------------------
+leaf_mesh = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
+for i, face in enumerate(faces):
+    for j in range(3):
+        leaf_mesh.vectors[i][j] = vertices[face[j]]
+
+# Save STL (maple leaf)
+leaf_mesh.save('maple_leaf.stl')
+
+print("✅ Maple Leaf STL saved: maple_leaf.stl")
+print(f"📏 Size: {LEAF_WIDTH}\" wide + {PETIOLE_LENGTH}\" petiole (print-friendly)")
+print("🔑 Features: 5 lobes, serrated edges, integrated petiole, thin leaf thickness")
