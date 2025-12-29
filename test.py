@@ -1,168 +1,121 @@
 import numpy as np
 from stl import mesh
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+from shapely.geometry import Polygon
+from shapely.ops import triangulate
+from matplotlib.textpath import TextPath
+from matplotlib.font_manager import FontProperties
+from matplotlib.path import Path
 
-# ------------------------------------------------------------------------------
-# Step 1: Define parametric equations for 3D rose petals
-# ------------------------------------------------------------------------------
-def generate_rose_petals(num_petals=20, petal_resolution=50, height_resolution=30):
-    """
-    Generate 3D points and triangular faces for rose petals
-    Based on polar rose curve (r = a*sin(nθ)) extended to 3D with curvature
-    """
-    # Parameters for petal shape (tune these for different rose styles)
-    a = 1.5  # Base radius of petals
-    n = 5    # Petal "lobes" (higher = more detailed)
-    height = 4.0  # Total height of the rose bloom
-    curvature = 0.8  # Petal curvature factor
+# ================= SETTINGS =================
+TEXT = "SARA"
 
-    # Generate parametric coordinates
-    theta = np.linspace(0, 2 * np.pi, num_petals * petal_resolution)
-    phi = np.linspace(0, np.pi/2, height_resolution)
-    theta, phi = np.meshgrid(theta, phi)
+FONT_SIZE = 90
+LETTER_HEIGHT = 10
+BASE_HEIGHT = 5
+MARGIN = 12
 
-    # 3D polar rose equation (convert to Cartesian coordinates)
-    r = a * np.sin(n * theta) * np.cos(phi) * curvature
-    x = r * np.cos(theta) * np.sin(phi)
-    y = r * np.sin(theta) * np.sin(phi)
-    z = phi * height  # Height increases with phi
+CURVE_STEPS = 8   # 🔴 INCREASE THIS FOR SMOOTHER CURVES (6–12 good)
 
-    # Add slight randomness for natural petal shape
-    x += np.random.normal(0, 0.02, x.shape)
-    y += np.random.normal(0, 0.02, y.shape)
-    z += np.random.normal(0, 0.01, z.shape)
+# ==========================================
 
-    # Generate triangular faces for the petals
-    faces = []
-    vertices = []
-    vertex_idx = 0
+faces = []
 
-    # Flatten vertices and create triangular mesh
-    for i in range(height_resolution - 1):
-        for j in range(num_petals * petal_resolution - 1):
-            # Collect 4 vertices of a quad (split into 2 triangles)
-            v1 = (x[i,j], y[i,j], z[i,j])
-            v2 = (x[i+1,j], y[i+1,j], z[i+1,j])
-            v3 = (x[i+1,j+1], y[i+1,j+1], z[i+1,j+1])
-            v4 = (x[i,j+1], y[i,j+1], z[i,j+1])
-            
-            vertices.extend([v1, v2, v3, v4])
-            
-            # Add two triangles per quad
-            faces.append([vertex_idx, vertex_idx+1, vertex_idx+2])
-            faces.append([vertex_idx, vertex_idx+2, vertex_idx+3])
-            vertex_idx += 4
+# ---------- HIGH-RES TEXT PATH ----------
+font = FontProperties(family="DejaVu Sans", weight="bold")
+tp = TextPath((0, 0), TEXT, size=FONT_SIZE, prop=font)
 
-    return np.array(vertices), np.array(faces)
+# 🔑 Interpolate curves (THIS IS THE MAGIC)
+hires_path = tp.interpolated(CURVE_STEPS)
 
-# ------------------------------------------------------------------------------
-# Step 2: Generate cylindrical stem
-# ------------------------------------------------------------------------------
-def generate_stem(stem_height=8, stem_radius=0.3, resolution=20):
-    """Generate 3D points/faces for a cylindrical stem"""
-    theta = np.linspace(0, 2 * np.pi, resolution)
-    z = np.linspace(-stem_height, 0, resolution)
-    theta, z = np.meshgrid(theta, z)
+# Convert to polygons (holes preserved)
+polygons = []
+for poly in hires_path.to_polygons():
+    p = Polygon(poly)
+    if p.is_valid and p.area > 1:
+        polygons.append(p)
 
-    # Cylinder coordinates
-    x = stem_radius * np.cos(theta)
-    y = stem_radius * np.sin(theta)
+# Merge text
+text_shape = polygons[0]
+for p in polygons[1:]:
+    text_shape = text_shape.union(p)
 
-    # Generate faces
-    faces = []
-    vertices = []
-    vertex_idx = 0
+minx, miny, maxx, maxy = text_shape.bounds
+W = (maxx - minx) + 2 * MARGIN
+D = (maxy - miny) + 2 * MARGIN
 
-    for i in range(resolution - 1):
-        for j in range(resolution - 1):
-            v1 = (x[i,j], y[i,j], z[i,j])
-            v2 = (x[i+1,j], y[i+1,j], z[i+1,j])
-            v3 = (x[i+1,j+1], y[i+1,j+1], z[i+1,j+1])
-            v4 = (x[i,j+1], y[i,j+1], z[i,j+1])
-            
-            vertices.extend([v1, v2, v3, v4])
-            
-            faces.append([vertex_idx, vertex_idx+1, vertex_idx+2])
-            faces.append([vertex_idx, vertex_idx+2, vertex_idx+3])
-            vertex_idx += 4
+OX = MARGIN - minx
+OY = MARGIN - miny
 
-    # Add stem bottom cap (closed cylinder)
-    cap_center = (0, 0, -stem_height)
-    vertices.append(cap_center)
-    cap_idx = vertex_idx
-    vertex_idx += 1
+# ---------- BASE ----------
+def add_box(x, y, z):
+    v = np.array([
+        [0,0,0],[x,0,0],[x,y,0],[0,y,0],
+        [0,0,z],[x,0,z],[x,y,z],[0,y,z]
+    ])
+    f = [
+        [0,1,2],[0,2,3],
+        [4,6,5],[4,7,6],
+        [0,4,5],[0,5,1],
+        [1,5,6],[1,6,2],
+        [2,6,7],[2,7,3],
+        [3,7,4],[3,4,0]
+    ]
+    for a,b,c in f:
+        faces.append([v[a],v[b],v[c]])
 
-    # Append all edge vertices for the cap first
-    edge_start_idx = vertex_idx
-    for j in range(resolution - 1):
-        v_edge = (x[0, j], y[0, j], z[0, j])
-        vertices.append(v_edge)
-        vertex_idx += 1
+add_box(W, D, BASE_HEIGHT)
 
-    # Create triangular fan faces from center to edge vertices
-    num_edges = resolution - 1
-    for j in range(num_edges):
-        v_curr = edge_start_idx + j
-        v_next = edge_start_idx + ((j + 1) % num_edges)
-        faces.append([cap_idx, v_curr, v_next])
+# ---------- EXTRUDE WITH HOLES ----------
+def extrude(poly):
+    for tri in triangulate(poly):
+        pts = np.array(tri.exterior.coords)[:3]
 
-    return np.array(vertices), np.array(faces)
+        # bottom
+        faces.append([
+            [pts[0][0]+OX, pts[0][1]+OY, BASE_HEIGHT],
+            [pts[1][0]+OX, pts[1][1]+OY, BASE_HEIGHT],
+            [pts[2][0]+OX, pts[2][1]+OY, BASE_HEIGHT]
+        ])
 
-# ------------------------------------------------------------------------------
-# Step 3: Combine all parts and generate STL
-# ------------------------------------------------------------------------------
-def create_rose_stl(output_filename="3d_rose.stl"):
-    # Generate individual parts
-    petal_vertices, petal_faces = generate_rose_petals()
-    stem_vertices, stem_faces = generate_stem()
+        # top
+        faces.append([
+            [pts[0][0]+OX, pts[0][1]+OY, BASE_HEIGHT+LETTER_HEIGHT],
+            [pts[2][0]+OX, pts[2][1]+OY, BASE_HEIGHT+LETTER_HEIGHT],
+            [pts[1][0]+OX, pts[1][1]+OY, BASE_HEIGHT+LETTER_HEIGHT]
+        ])
 
-    # Adjust stem face indices (offset by petal vertex count)
-    stem_faces += len(petal_vertices)
+    def wall(coords, reverse=False):
+        if reverse:
+            coords = coords[::-1]
+        for i in range(len(coords)-1):
+            x1,y1 = coords[i]
+            x2,y2 = coords[i+1]
+            faces.append([
+                [x1+OX,y1+OY,BASE_HEIGHT],
+                [x2+OX,y2+OY,BASE_HEIGHT],
+                [x2+OX,y2+OY,BASE_HEIGHT+LETTER_HEIGHT]
+            ])
+            faces.append([
+                [x1+OX,y1+OY,BASE_HEIGHT],
+                [x2+OX,y2+OY,BASE_HEIGHT+LETTER_HEIGHT],
+                [x1+OX,y1+OY,BASE_HEIGHT+LETTER_HEIGHT]
+            ])
 
-    # Combine vertices and faces
-    all_vertices = np.vstack([petal_vertices, stem_vertices])
-    all_faces = np.vstack([petal_faces, stem_faces])
+    wall(list(poly.exterior.coords))
+    for hole in poly.interiors:
+        wall(list(hole.coords), reverse=True)
 
-    # Create STL mesh object
-    rose_mesh = mesh.Mesh(np.zeros(all_faces.shape[0], dtype=mesh.Mesh.dtype))
-    for i, face in enumerate(all_faces):
-        for j in range(3):
-            rose_mesh.vectors[i][j] = all_vertices[face[j], :]
+# Handle multi-polygons
+if text_shape.geom_type == "Polygon":
+    extrude(text_shape)
+else:
+    for g in text_shape.geoms:
+        extrude(g)
 
-    # Save STL file
-    rose_mesh.save(output_filename)
-    print(f"STL file saved as: {output_filename}")
+# ---------- EXPORT ----------
+data = np.zeros(len(faces), dtype=mesh.Mesh.dtype)
+for i, f in enumerate(faces):
+    data["vectors"][i] = f
 
-    return all_vertices, all_faces
-
-# ------------------------------------------------------------------------------
-# Step 4: Visualize 3D rose (matplotlib preview)
-# ------------------------------------------------------------------------------
-def visualize_rose(vertices):
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
-
-    # Plot vertices (points)
-    ax.scatter(vertices[:,0], vertices[:,1], vertices[:,2], 
-               c=vertices[:,2], cmap="RdYlGn", s=1, alpha=0.8)
-
-    # Set axis labels and title
-    ax.set_xlabel('X (cm)')
-    ax.set_ylabel('Y (cm)')
-    ax.set_zlabel('Z (cm)')
-    ax.set_title('3D Rose Model Preview')
-
-    # Equal aspect ratio for realistic view
-    ax.set_aspect('equal')
-    plt.show()
-
-# ------------------------------------------------------------------------------
-# Main execution
-# ------------------------------------------------------------------------------
-if __name__ == "__main__":
-    # Generate STL file
-    vertices, faces = create_rose_stl()
-    
-    # Preview the 3D model
-    visualize_rose(vertices)
+mesh.Mesh(data).save("SARA_nameplate_high_quality.stl")
+print("✅ High-quality realistic nameplate created")
