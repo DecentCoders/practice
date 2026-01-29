@@ -26,3 +26,50 @@ def check_win(board, player):
 
 # Check if the board is full (draw)
 
+def check_draw(board):
+    return " " not in board
+
+# Get valid move from player
+def get_valid_move(board, player):
+    while True:
+        move = input(f"Player {player}, enter your move (0-8): ")
+        # Check if input is a number
+        if not move.isdigit():
+            print("Error! Enter a number between 0 and 8.")
+            continue
+        move = int(move)
+        # Check if position is in 0-8 and empty
+        if 0 <= move <= 8 and board[move] == " ":
+            return move
+        else:
+            print("Invalid move! Position is taken or out of range. Try again.")
+
+# Main game loop
+def play_tic_tac_toe():
+    print("=== Tic Tac Toe Game ===")
+    print("Board Positions:")
+    print(" 0 | 1 | 2 \n---+---+---\n 3 | 4 | 5 \n---+---+---\n 6 | 7 | 8 ")
+    board = init_board()
+    current_player = "X"  # X goes first
+
+    while True:
+        print_board(board)
+        move = get_valid_move(board, current_player)
+        board[move] = current_player  # Place the player's piece
+
+        # Check if current player wins
+        if check_win(board, current_player):
+            print_board(board)
+            print(f"🎉 Player {current_player} WINS! 🎉")
+            break
+        # Check if it's a draw
+        if check_draw(board):
+            print_board(board)
+            print("🤝 It's a DRAW! 🤝")
+            break
+        # Switch player (X ↔ O)
+        current_player = "O" if current_player == "X" else "X"
+
+# Start the game
+if __name__ == "__main__":
+    play_tic_tac_toe()
