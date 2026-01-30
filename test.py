@@ -1,3 +1,5 @@
-meter = int(input("Enter the meter value: "))
-feet = meter* 3.28084
-print(f'{meter}m = {feet}f')
+num = int(input())
+if num%2 == 0:
+    print(f'{num} is a even number')
+else :
+    print(f'{num} is a odd number')
