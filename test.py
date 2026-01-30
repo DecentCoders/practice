@@ -1,4 +1,3 @@
-num1 = int(input("Enter the first number: "))
-num2 = int(input("Enter the second number: "))
-sum = num1 + num2
-print(sum)
+meter = int(input("Enter the meter value: "))
+feet = meter* 3.28084
+print(f'{meter}m = {feet}f')
