@@ -1,4 +1,4 @@
-def square (x):
-    return x*x
-list= [square(5),square(3),square(2)]
-print(list)
+def greeting(name):
+    print(f"Hello {name}!")
+name = input("Enter your name: ")
+greeting(name)
