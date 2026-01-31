@@ -1,4 +1,3 @@
-i = 1
-while i < 11:
-    print(f'3*{i} = {i*3}')
-    i += 1
+fruits = ["mango","strawberry","watermelon","apple","grapes"]
+for i in fruits:
+    print(i)
