@@ -1,6 +1,5 @@
 names = []
-firstname = input("Enter first name: ")
-middlename = input("Enter middle name:")
-secondname= input("Enter the second name: ")
-names.append(firstname)
+for i in range (3):
+    user_name = input("Enter name: ".format(i+1))
+    names.append(user_name)
 print(names)
