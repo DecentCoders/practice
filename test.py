@@ -1,3 +1,4 @@
 def square (x):
     return x*x
-print(square(5))
+list= [square(5),square(3),square(2)]
+print(list)
