@@ -46,3 +46,18 @@ for row in range(row_count):
         button.grid(row=row+1, column=column)
 
 frame.pack()
+#A+B, A-B, A*B, A/B
+A = "0"
+operator = None
+B = None
+
+def clear_all():
+    global A, B, operator
+    A = "0"
+    operator = None
+    B = None
+
+def remove_zero_decimal(num):
+    if num % 1 == 0:
+        num = int(num)
+    return str(num)
