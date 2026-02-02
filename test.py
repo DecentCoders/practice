@@ -120,4 +120,4 @@ def draw():
     window.after(100, draw) #call draw again every 100ms (1/10 of a second) = 10 frames per second
     draw()
 window.bind("<KeyRelease>", change_direction) #when you press on any key and then let go
-window.mainloop() #used for listening to window events like key presses
+window.mainloop() 
