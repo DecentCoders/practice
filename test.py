@@ -61,3 +61,23 @@ def remove_zero_decimal(num):
     if num % 1 == 0:
         num = int(num)
     return str(num)
+def button_clicked(value):
+    global right_symbols, top_symbols, label, A, B, operator
+
+    if value in right_symbols:
+        if value == "=":
+            if A is not None and operator is not None:
+                B = label["text"]
+                numA = float(A)
+                numB = float(B)
+
+                if operator == "+":
+                    label["text"] = remove_zero_decimal(numA + numB)
+                elif operator == "-":
+                    label["text"] = remove_zero_decimal(numA - numB)
+                elif operator == "×":
+                    label["text"] = remove_zero_decimal(numA * numB)
+                elif operator == "÷":
+                    label["text"] = remove_zero_decimal(numA / numB)
+                
+                clear_all()
