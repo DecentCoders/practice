@@ -35,3 +35,12 @@ def check_winner():
                 board[row][column].config(foreground=color_yellow, background=color_light_gray)
             game_over = True
             return
+#vertically, check 3 columns
+    for column in range(3):
+        if (board[0][column]["text"] == board[1][column]["text"] == board[2][column]["text"]
+            and board[0][column]["text"] != ""):
+            label.config(text=board[0][column]["text"]+" is the winner!", foreground=color_yellow)
+            for row in range(3):
+                board[row][column].config(foreground=color_yellow, background=color_light_gray)
+            game_over = True
+            return
