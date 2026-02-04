@@ -44,3 +44,11 @@ def check_winner():
                 board[row][column].config(foreground=color_yellow, background=color_light_gray)
             game_over = True
             return
+#diagonally
+    if (board[0][0]["text"] == board[1][1]["text"] == board[2][2]["text"]
+        and board[0][0]["text"] != ""):
+        label.config(text=board[0][0]["text"]+" is the winner!", foreground=color_yellow)
+        for i in range(3):
+            board[i][i].config(foreground=color_yellow, background=color_light_gray)
+        game_over = True
+        return
