@@ -65,3 +65,15 @@ def check_winner():
     if (turns == 9):
         game_over = True
         label.config(text="Tie!", foreground=color_yellow)
+        
+def new_game():
+    global turns, game_over
+
+    turns = 0
+    game_over = False
+
+    label.config(text=curr_player+"'s turn", foreground="white")
+
+    for row in range(3):
+        for column in range(3):
+            board[row][column].config(text="", foreground=color_blue, background=color_gray)
