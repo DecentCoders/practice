@@ -77,3 +77,18 @@ def new_game():
     for row in range(3):
         for column in range(3):
             board[row][column].config(text="", foreground=color_blue, background=color_gray)
+#game setup
+playerX = "X"
+playerO = "O"
+curr_player = playerX
+board = [[0, 0, 0], 
+         [0, 0, 0], 
+         [0, 0, 0]]
+
+color_blue = "#4584b6"
+color_yellow = "#ffde57"
+color_gray = "#343434"
+color_light_gray = "#646464"
+
+turns = 0
+game_over = False
