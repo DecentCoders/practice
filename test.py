@@ -61,3 +61,7 @@ def check_winner():
         board[2][0].config(foreground=color_yellow, background=color_light_gray)
         game_over = True
         return
+   #tie
+    if (turns == 9):
+        game_over = True
+        label.config(text="Tie!", foreground=color_yellow)
