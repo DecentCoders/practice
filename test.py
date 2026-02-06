@@ -1,6 +1,7 @@
-num1 = int(input("Enter the first number: "))
-num2= int(input("Enter the 2nd number: "))
-if num1> num2:
-    print("The first number was Larger")
+age = int(input("Enter your age: "))
+if age> 18:
+    print("You are an Adult")
+elif 13<= age <= 18:
+    print("You are a Teenager")
 else:
-    print("The second number was Larger")
+    print("You are a child")
