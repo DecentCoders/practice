@@ -1,7 +1,7 @@
-age = int(input("Enter your age: "))
-if age> 18:
-    print("You are an Adult")
-elif 13<= age <= 18:
-    print("You are a Teenager")
+num = float(input("Enter a number: "))
+if num>0:
+    print("It's a positive number...")
+elif num ==0:
+    print("the number was 0...")
 else:
-    print("You are a child")
+    print("It's number was negative...")
