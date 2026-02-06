@@ -1,6 +1,3 @@
-num = int(input("Enter a number: "))
-divisor = int(input("Enter the divisor: "))
-if num%divisor==0:
-    print(f'The number is divisible by {divisor}')
-else:
-    print(f'The number is not divisible by {divisor}')
+for i in range (0,101):
+    if i%2 == 0:
+        print(i, end=",")
