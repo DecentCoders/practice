@@ -13,8 +13,30 @@ def kbcGame():
     ["Which is the largest river of Bangladesh?","Padma","Meghna","Brahmaputra","Karnaphuli",3]
     ]
 
-levels = ['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000']
-money_won = 0
-print("------Who will be millionaire------")
-time.sleep(1)
+    levels = ['1000','2000','3000','4000','5000','6000','7000','8000','9000','10000']
+    money_won = 0
+    print("------Who will be millionaire------")
+    time.sleep(1)
 
+    for i in range(len(questions)):
+        current_qst = questions[i]
+        print(f'\n Question for USD {levels[i]} :-')
+        print(f' Q: {current_qst[0]}')
+        print(f' 1. {current_qst[1]} \t 2. {current_qst[2]} \n 3. {current_qst[3]} \t 4. {current_qst[4]}')
+        try:
+            choice= int(input("Enter your choice (or 0 to quite with current prize money): "))
+        except ValueError:
+            print("Invalid input, Please enter a number...")
+            break
+        if choice == 0:
+            print(f'Quiting...You are taking home USD {money_won}')
+        elif choice == current_qst[5]:
+            money_won = levels[i]
+            print(f"Right answer.. You have won USD {money_won}")
+        else:
+            print(f"Wrong answer! The correct answer was {current_qst[5]}")
+            print("You have lost everything...Sorry")
+            break
+        if money_won == levels[-1]:
+            print("Congratulations You have completed the game. Thank you")
+kbcGame()
