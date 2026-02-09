@@ -1,5 +1,11 @@
-names =['Hridoy','Hawladar','Rifat','Sajib','Riad']
-with open ('guests.txt', 'w') as file:
-    for name in names:
-        file.write(name + '\n')   
-print("File 'guests.txt' has been created.")
+name = input("Enter a name  to check: ")
+found = False
+with open('guests.txt','r') as file:
+    for line in file:
+        if line.strip() == name:
+            found = True
+            break
+if found:
+    print("Access Granted")
+else:
+    print("Access Denied")
