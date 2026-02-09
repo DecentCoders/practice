@@ -1,11 +1,23 @@
-name = input("Enter a name  to check: ")
-found = False
-with open('guests.txt','r') as file:
-    for line in file:
-        if line.strip() == name:
-            found = True
-            break
-if found:
-    print("Access Granted")
-else:
-    print("Access Denied")
+import tkinter #tk-interface (graphical user interface library)
+
+def set_tile(row, column):
+    global curr_player
+
+    if (game_over):
+        return
+
+    if board[row][column]["text"] != "":
+        #already taken spot
+        return
+    
+    board[row][column]["text"] = curr_player #mark the board
+
+    if curr_player == playerO: #switch player
+        curr_player = playerX
+    else:
+        curr_player = playerO
+    
+    label["text"] = curr_player+"'s turn"
+
+    #check winner
+    check_winner()
