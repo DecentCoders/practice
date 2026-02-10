@@ -1,16 +1,14 @@
-passwords = ["12345", "SecurePath7", "mypassword99", "PythonIsCool2026", "admin"]
+list_a = [101, 102, 105, 108, 110]
+list_b = [105, 108, 112, 115]
 
-for pw in passwords:
-    # Rule 1: Length
-    length_ok = len(pw) >= 8
-    
-    # Rule 2: Contains a number
-    has_number = any(char.isdigit() for char in pw)
-    
-    # Rule 3: No "password" (case-insensitive)
-    not_generic = "password" not in pw.lower()
+set_a = set(list_a)
+set_b = set(list_b)
 
-    if length_ok and has_number and not_generic:
-        print(f"Valid: {pw}")
-    else:
-        print(f"Invalid: {pw}")
+# IDs in both
+both = set_a.intersection(set_b)
+
+# IDs in only one (Symmetric Difference)
+unique = set_a.symmetric_difference(set_b)
+
+print(f"In both: {both}")
+print(f"Unique to one list: {unique}")
