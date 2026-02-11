@@ -1,12 +1,6 @@
-store_a = {"apples": 20, "orange": 15}
-store_b = {"apples": 10, "bananas": 5}
+def is_palindrome(text):
+    clean_text = text.lower()
+    return clean_text == clean_text[::-1]
 
-total_stock = store_a.copy()
-
-for item, count in store_b.items():
-    if item in total_stock:
-        total_stock[item] += count
-    else:
-        total_stock[item] = count
-
-print(total_stock)
+print(is_palindrome("Radar"))  # True
+print(is_palindrome("Python")) # False
