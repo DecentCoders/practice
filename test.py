@@ -1,15 +1,16 @@
-import requests
-
-urls = ["https://www.google.com", "https://www.github.com", "https://thisisafakesite123.com"]
-
-print("--- Website Status Report ---")
-for url in urls:
-    try:
-        response = requests.get(url, timeout=5)
-        # 200 is the standard "Success" code
-        if response.status_code == 200:
-            print(f"✅ {url} is ONLINE")
+def caesar_cipher(text, shift):
+    result = ""
+    for char in text:
+        if char.isalpha(): # Only shift letters
+            start = ord('a') if char.islower() else ord('A')
+            # The modulo 26 ensures we wrap around from Z back to A
+            new_char = chr(start + (ord(char) - start + shift) % 26)
+            result += new_char
         else:
-            print(f"⚠️ {url} returned status code: {response.status_code}")
-    except requests.exceptions.RequestException:
-        print(f"❌ {url} is DOWN or Unreachable")
+            result += char # Keep spaces and punctuation as they are
+    return result
+
+message = "Hello World!"
+encrypted = caesar_cipher(message, 3)
+print(f"Original: {message}")
+print(f"Encrypted: {encrypted}") # Khoor Zruog!
