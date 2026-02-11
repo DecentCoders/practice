@@ -1,8 +1,8 @@
-scores = {"Rick": 85, "Amy": 92, "Joe": 78, "Zelda": 99, "Bo": 88}
+fib_sequence = [0, 1]
 
-# Sort by value (the score), reversed for highest first
-sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+while len(fib_sequence) < 10:
+    # The next number is the sum of the last two
+    next_num = fib_sequence[-1] + fib_sequence[-2]
+    fib_sequence.append(next_num)
 
-# Take the first three and print names
-for i in range(3):
-    print(f"{i+1}. {sorted_scores[i][0]}")
+print(fib_sequence)
