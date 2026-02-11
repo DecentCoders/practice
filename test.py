@@ -1,8 +1,12 @@
-fib_sequence = [0, 1]
+import json
 
-while len(fib_sequence) < 10:
-    # The next number is the sum of the last two
-    next_num = fib_sequence[-1] + fib_sequence[-2]
-    fib_sequence.append(next_num)
+def save_data(expenses):
+    with open("expenses.json", "w") as f:
+        json.dump(expenses, f)
 
-print(fib_sequence)
+def load_data():
+    try:
+        with open("expenses.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
