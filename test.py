@@ -1,15 +1,10 @@
-# Goal: Calculate the average of a list and save a report
-data = [80, 90, 100]
-
-def get_average(numbers):
-    total = sum(numbers)
-    count = len(numbers)
-    return total / count  # Bug 1
-
-result = get_average(data)
-
-if result > 85:
-    print("Great job!")  # Bug 2
-
-with open("report.txt", "w") as f:
-    f.write("The average was: " + result)  # Bug 3
+matrix = [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
+for i in range(1, 21):
+    if i % 3 == 0 and i % 5 == 0:
+        print("FizzBuzz")
+    elif i % 3 == 0:
+        print("Fizz")
+    elif i % 5 == 0:
+        print("Buzz")
+    else:
+        print(i)
