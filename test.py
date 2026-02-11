@@ -1,8 +1,12 @@
-matrix = [[1, 2, 3], [4, 5], [6, 7, 8, 9]]
-flat_list = []
+store_a = {"apples": 20, "orange": 15}
+store_b = {"apples": 10, "bananas": 5}
 
-for sublist in matrix:
-    for item in sublist:
-        flat_list.append(item)
+total_stock = store_a.copy()
 
-print(flat_list)
+for item, count in store_b.items():
+    if item in total_stock:
+        total_stock[item] += count
+    else:
+        total_stock[item] = count
+
+print(total_stock)
