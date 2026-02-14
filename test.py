@@ -1,33 +1,31 @@
-def extract_error_name(line):
-    """Function to pull the error message out of a log string."""
-    if "ERROR" in line:
-        # Splitting by " - " and taking the last part
-        parts = line.split(" - ")
-        return parts[-1].strip()
-    return None
-
 def process_logs(input_file, output_file):
+    # This dictionary acts as our database
     error_counts = {}
 
-    # Read logic
     try:
+        # 1. READ: Open the file for reading ('r')
         with open(input_file, "r") as f:
             for line in f:
-                error = extract_error_name(line)
-                if error:
-                    # Update dictionary: if error exists, +1; if not, set to 1
-                    error_counts[error] = error_counts.get(error, 0) + 1
+                if "ERROR" in line:
+                   
+                    parts = line.strip().split(" - ")
+                    error_msg = parts[-1] 
+                    if error_msg in error_counts:
+                        error_counts[error_msg] += 1
+                    else:
+                        error_counts[error_msg] = 1
         
-        # Write logic
+        # 4. WRITE: Save the results to the output file ('w')
         with open(output_file, "w") as out:
-            out.write("--- ERROR SUMMARY REPORT ---\n")
+            out.write("ERROR FREQUENCY REPORT\n")
+            out.write("="*22 + "\n")
             for error, count in error_counts.items():
-                out.write(f"{error}: {count} occurrences\n")
+                out.write(f"{error}: {count}\n")
         
-        print(f"Success! Report saved to {output_file}")
+        print(f"Processed successfully. Check {output_file}")
 
     except FileNotFoundError:
-        print("Error: The raw log file was not found.")
+        print("Error: Input file missing!")
 
-# Run the program
-process_logs("raw_logs.txt", "cleaned_report.txt")
+# Running the script
+process_logs("raw_logs.txt", "summary.txt")

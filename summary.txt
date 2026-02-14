@@ -1,0 +1,4 @@
+ERROR FREQUENCY REPORT
+======================
+Connection Timeout: 2
+Database Failure: 1
