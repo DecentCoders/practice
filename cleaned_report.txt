@@ -1,0 +1,3 @@
+--- ERROR SUMMARY REPORT ---
+[Connection Timeout] found 2 times.
+[Database Failure] found 1 times.
