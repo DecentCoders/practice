@@ -1,31 +1,36 @@
-def process_logs(input_file, output_file):
-    # This dictionary acts as our database
-    error_counts = {}
+import csv
+
+def calculate_profit(price, qty):
+    """Simple function to handle the math."""
+    return float(price) * int(qty)
+
+def process_sales(filename):
+    category_totals = {}
 
     try:
-        # 1. READ: Open the file for reading ('r')
-        with open(input_file, "r") as f:
-            for line in f:
-                if "ERROR" in line:
-                   
-                    parts = line.strip().split(" - ")
-                    error_msg = parts[-1] 
-                    if error_msg in error_counts:
-                        error_counts[error_msg] += 1
-                    else:
-                        error_counts[error_msg] = 1
-        
-        # 4. WRITE: Save the results to the output file ('w')
-        with open(output_file, "w") as out:
-            out.write("ERROR FREQUENCY REPORT\n")
-            out.write("="*22 + "\n")
-            for error, count in error_counts.items():
-                out.write(f"{error}: {count}\n")
-        
-        print(f"Processed successfully. Check {output_file}")
+        with open(filename, "r") as f:
+            # DictReader treats each row as a dictionary
+            reader = csv.DictReader(f)
+            
+            for row in reader:
+                # 1. Logic: Skip anything that was 'Returned'
+                if row["Status"] == "Returned":
+                    continue
+                
+                # 2. Manipulation: Use our function to get the row total
+                profit = calculate_profit(row["Price"], row["Quantity"])
+                
+                # 3. Grouping: Add to the specific category in our dictionary
+                cat = row["Category"]
+                category_totals[cat] = category_totals.get(cat, 0) + profit
+
+        # 4. Output: Show the final results
+        print("--- Sales Summary by Category ---")
+        for category, total in category_totals.items():
+            print(f"{category}: ${total:,.2f}")
 
     except FileNotFoundError:
-        print("Error: Input file missing!")
+        print("File not found! Make sure sales.csv exists.")
 
-# Running the script
-process_logs("raw_logs.txt", "summary.txt")
+# To run this, ensure the csv file is created first
+process_sales("sales.csv")
