@@ -1,21 +1,12 @@
-rooms = {
-    'Hall': {'east': 'Kitchen', 'south': 'Garden'},
-    'Kitchen': {'west': 'Hall'},
-    'Garden': {'north': 'Hall'}
-}
+logs = [
+    "2026-02-14 10:00 - INFO - System Boot",
+    "2026-02-14 10:05 - ERROR - Connection Timeout",
+    "2026-02-14 10:10 - INFO - User Login",
+    "2026-02-14 10:15 - ERROR - Database Failure",
+    "2026-02-14 10:20 - ERROR - Connection Timeout",
+    "2026-02-14 10:25 - INFO - Backup Complete"
+]
 
-current_room = 'Hall'
-
-while True:
-    print(f"\nYou are in the {current_room}.")
-    print("Exits:", ", ".join(rooms[current_room].keys()))
-    
-    move = input("Where do you want to go? (or 'quit'): ").lower()
-    
-    if move == 'quit':
-        break
-    
-    if move in rooms[current_room]:
-        current_room = rooms[current_room][move]
-    else:
-        print("You can't go that way!")
+with open("raw_logs.txt", "w") as f:
+    for entry in logs:
+        f.write(entry + "\n")
