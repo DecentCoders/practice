@@ -9,6 +9,13 @@ def extract_error_name(line):
         # We take the last part (index -1) and clean up any whitespace
         return parts[-1].strip()
     return None
+def extract_details(line):
+    if "ERROR" in line:
+        parts = line.split(" - ")
+        time = parts[0]
+        message = parts[-1].strip()
+        return (time, message)
+    return None
 
 def process_logs(input_file, output_file):
     error_counts = {}
