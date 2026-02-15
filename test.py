@@ -1,4 +1,5 @@
-hobbies = [input("Enter a Hobbie: ") for i in range(5)]
-print(hobbies)
-with open("hobbies.txt", 'w') as file:
-    file.write('\n'.join(hobbies))
+with open("cities.txt", "r") as file:
+    lines = file.readlines()
+    for line in lines: 
+        if line.startswith("N"):
+            print(line)
