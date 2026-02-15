@@ -1,3 +1,4 @@
-with open("cities.txt","a+") as file:
-    file.write("Barlin \n")
-    file.write("Toronto \n")
+with open("cities.txt","r+") as file:
+    lines = file.readlines()
+    line_count = len(lines)
+    print(line_count)        
