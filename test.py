@@ -1,4 +1,3 @@
-with open("cities.txt","r+") as file:
-    lines = file.readlines()
-    for line in lines:
-        print(line.strip())
+with open("cities.txt","a+") as file:
+    file.write("Barlin \n")
+    file.write("Toronto \n")
