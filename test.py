@@ -1,6 +1,4 @@
-with open("cities.txt","r+") as file:
-    lines = file.readlines()
-    line_count = 0
-    for line in lines:
-        line_count+=1
-    print(line_count)     
+hobbies = [input("Enter a Hobbie: ") for i in range(5)]
+print(hobbies)
+with open("hobbies.txt", 'w') as file:
+    file.write('\n'.join(hobbies))
