@@ -1,4 +1,4 @@
-cities = ["London", "Paris", "New York", "Tokyo", "Sydney"]
-with open("cities.txt","w") as file:
-    for city in cities:
-        file.write(city +"\n")
+with open("cities.txt","r") as file:
+    lines = file.readlines()
+    for line in lines:
+        print(line)
