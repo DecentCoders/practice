@@ -1,3 +1,0 @@
---- ERROR SUMMARY REPORT ---
-Connection Timeout: 2 occurrences
-Database Failure: 1 occurrences

@@ -1,6 +1,0 @@
-Item,Category,Price,Quantity,Status
-Laptop,Electronics,1000,1,Sold
-Mouse,Electronics,25,2,Sold
-Desk,Furniture,150,1,Returned
-Monitor,Electronics,200,1,Sold
-Chair,Furniture,85,2,Sold
