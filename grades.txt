@@ -1,1 +1,2 @@
-Name: Hridoy, ID: 23, Score: 90, Grade: A 
+| Name | ID | Score | Grade |
+| Hridoy | 20 | 90 | A |
