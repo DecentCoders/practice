@@ -25,4 +25,8 @@ student_info = {
     
 grade = calc_score(student_info)
 print("Grade:", grade) 
+
+with open("grades.txt","w")as file:
+    calc_score(student_info)
+    file.write = student_info
     
