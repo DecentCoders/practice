@@ -1,19 +1,14 @@
-def calc_score(score):
+def calc_score(student_info):
+    """function for calculating the grade"""
     grade = ""
     return grade
-name = ""
-id = 0
-score = 0
+
 student_info = {
-    "Name":name,
-    "ID":id,
-    "Score": score,
+    "Name":input("Enter your name: "),
+    "ID":input("Enter your ID: "),
+    "Score": input("Enter your score: "),
     }
-for i in range(0,3):
-    name = input("Enter your name: ")
-    if name == "quite":
-        print("Quiting...")
-        break
+
     
-print(name)
+print(student_info)
     
