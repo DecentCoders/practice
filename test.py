@@ -1,6 +1,11 @@
 def calc_score(student_info):
     """function for calculating the grade"""
     score = student_info.get("Score")
+    try:
+         score = int(score)
+    except(TypeError,ValueError):
+        return "Invalid score"
+        
     if score >= 90:
         grade = "A"
     elif score >= 80:
@@ -20,5 +25,5 @@ student_info = {
     }
 
     
-print(student_info)
+calc_score(student_info)
     
