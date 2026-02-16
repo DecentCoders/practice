@@ -19,11 +19,10 @@ def calc_score(student_info):
     return grade
 
 student_info = {
-    "Name":input("Enter your name: "),
-    "ID":input("Enter your ID: "),
-    "Score": input("Enter your score: "),
-    }
-
+        "Name": input("Enter your name: "),
+        "ID": input("Enter your ID: "),
+        "Score": input("Enter your score: "),}
     
-calc_score(student_info)
+grade = calc_score(student_info)
+print("Grade:", grade) 
     
