@@ -24,9 +24,8 @@ student_info = {
         "Score": input("Enter your score: "),}
     
 grade = calc_score(student_info)
-print("Grade:", grade) 
 
-with open("grades.txt","w")as file:
-    calc_score(student_info)
-    file.write = student_info
-    
+with open("grades.txt","a")as file:
+    line = f'Name: {student_info["Name"]}, ID: {student_info["ID"]}, Score: {student_info["Score"]}, Grade: {grade} \n'
+    file.write(line)
+    print("Appended successfully..")
