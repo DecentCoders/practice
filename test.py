@@ -1,6 +1,16 @@
 def calc_score(student_info):
     """function for calculating the grade"""
-    grade = ""
+    score = student_info.get("Score")
+    if score >= 90:
+        grade = "A"
+    elif score >= 80:
+        grade = "B"
+    elif score >= 70:
+        grade = "C"
+    elif score >= 60:
+        grade = "D"
+    else:
+        grade = "F"
     return grade
 
 student_info = {
