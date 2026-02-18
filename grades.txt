@@ -3,3 +3,5 @@
 | Hridoy | sfsd | & F:/python/practice/.venv/Scripts/python.exe f:/python/practice/test.py | Invalid score |
 | Hriody | 12 | adsfasd | Invalid score |
 | Hriody | 22 | 24 | F |
+| Hriody | 20 | -29 | F |
+| hasdfa | 23 | -10 | F |

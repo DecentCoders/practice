@@ -33,10 +33,14 @@ while True:
 while True:
     try:
         score_input = input("Enter your score: ")
-        student_info["Score"] =  int(score_input)
+        score = int(score_input)
+        if score < 0 or score > 100:
+            print("Error: Score must be between 0 and 100. Please try again.")
+            continue
+        student_info["Score"] = score
         break
-    except:
-        print("Ivalid input. Try again..")
+    except ValueError:
+        print("Error: Score must be an integer. Please try again.")
 
 grade = calc_score(student_info)
 
