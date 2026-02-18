@@ -27,6 +27,9 @@ while True:
     try:
         id_input = input("Enter your ID: ")
         student_info["ID"] = int(id_input)
+        if student_info["ID"]<0 :
+            print("Id cant be negative number")
+            continue
         break
     except ValueError:
         print("Error: ID must be an integer. Please try again.")

@@ -5,3 +5,4 @@
 | Hriody | 22 | 24 | F |
 | Hriody | 20 | -29 | F |
 | hasdfa | 23 | -10 | F |
+| hridoy | 10 | 10 | F |
