@@ -30,8 +30,13 @@ while True:
         break
     except ValueError:
         print("Error: ID must be an integer. Please try again.")
-
-student_info["Score"] = input("Enter your score: ") 
+while True:
+    try:
+        score_input = input("Enter your score: ")
+        student_info["Score"] =  int(score_input)
+        break
+    except:
+        print("Ivalid input. Try again..")
 
 grade = calc_score(student_info)
 
