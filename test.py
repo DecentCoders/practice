@@ -33,17 +33,28 @@ while True:
         break
     except ValueError:
         print("Error: ID must be an integer. Please try again.")
+# Current way (cleaner for input validation):
 while True:
     try:
-        score_input = input("Enter your score: ")
-        score = int(score_input)
+        score = int(input("Enter score: "))
         if score < 0 or score > 100:
-            print("Error: Score must be between 0 and 100. Please try again.")
-            continue
-        student_info["Score"] = score
+            print("Error: Score must be 0-100")
+            continue  # Ask again
         break
     except ValueError:
-        print("Error: Score must be an integer. Please try again.")
+        print("Error: Must be integer")
+
+# Using raise (more explicit errors):
+# while True:
+#     try:
+#         score = int(input("Enter score: "))
+#         if score < 0 or score > 100:
+#             raise ValueError("Score must be between 0 and 100")
+#         break
+#     except ValueError as e:
+#         print(f"Error: {e}. Please try again.")
+
+student_info["Score"] = score
 
 grade = calc_score(student_info)
 
