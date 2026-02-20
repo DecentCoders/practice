@@ -1,2 +1,2 @@
-from main import test
-test()
+import os 
+os.mkdir("test")
