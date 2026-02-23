@@ -1,20 +1,24 @@
+import random
+import string
+
+def generate_random_string(length=3):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
 def encode(main_code):
     if len(main_code) < 3:
         return main_code[::-1]
     else:
-        random_1 = "bdd"
-        random_2 = "dss"
+        random_1 = generate_random_string(3)
+        random_2 = generate_random_string(3)
         return random_1 + main_code[1:] + main_code[:1] + random_2
 
 def decode(secret_code):
     if len(secret_code) < 3:
         return secret_code[::-1]
     else:
-        random_1 = "bdd"
-        random_2 = "dss"
-        # Remove prefix and suffix
-        if secret_code.startswith(random_1) and secret_code.endswith(random_2):
-            middle = secret_code[len(random_1):-len(random_2)]
+        # Remove first 3 and last 3 characters (random padding)
+        if len(secret_code) >= 6:
+            middle = secret_code[3:-3]
             # Reconstruct: last char of middle + rest
             main_code = middle[-1] + middle[:-1]
             return main_code
