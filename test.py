@@ -23,6 +23,7 @@ def os_practice():
     
 # ---------------------------
 dir = input("Enter the path:")
+os.rename(f"KBC/index.py",f"KBC/{dir}.py")
 
 
 
