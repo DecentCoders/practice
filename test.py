@@ -21,11 +21,11 @@ def os_practice():
     print(os.path.split(dir))
     print(os.path.basename(dir))
     
+    dir = input("Enter the path:")
+    print(os.name)
+    print(os.cpu_count())
+    print(os.getpid())
 # ---------------------------
-dir = input("Enter the path:")
-os.rename(f"KBC/index.py",f"KBC/{dir}.py")
-
-
 
 
 
