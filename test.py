@@ -1,14 +1,11 @@
-# Import the required os module for file system operations
 import os
-
-# Traverse current directory (.) and all its subdirectories with os.walk()
-# root = current folder path | dirs = list of subfolders in root | files = list of files in root
-for root, dirs, files in os.walk('.'):
-    # Loop through every file in the current folder (root)
-    for file in files:
-        # Check if the file has a .txt extension
-        if file.endswith('.txt'):
-            # Create the full file path (combines folder path + file name, OS-compatible)
-            full_txt_path = os.path.join(root, file)
-            # Print the full path of the .txt file
-            print(f"Found .txt file: {full_txt_path}")
+directory = input("Enter a directory you want to search in: ")
+file_name = input("Enter the filename you want to search for: ")
+if not file_name:
+    print("The file doesn't exitst")
+else:
+    for root , dirs, files in os.walk('.'):
+        for file in files:
+            if file ==(file_name):
+                full_path = os.path.join(root,file_name)
+                print(f'Found the file,{full_path}')
