@@ -11,7 +11,7 @@ def count_total_files(directory):
     return total_file_count
 
 if __name__ == "__main__":
-    target_directory = "./your_target_dir" 
+    target_directory = "." 
     try:
         count = count_total_files(target_directory)
         print(f"Total number of files in {target_directory} (including subdirectories): {count}")
