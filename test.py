@@ -1,21 +1,34 @@
 import os
+from datetime import datetime  # To convert timestamp to readable time
 
-def count_total_files(directory):
-    """
-    Count the total number of files (excluding directories) in a given directory and all its subdirectories.
-    """
-    total_file_count = 0
+def get_file_info(file_path):
+    # Validate file exists first
+    if not os.path.isfile(file_path):
+        print(f"Error: '{file_path}' is not a valid file or does not exist.")
+        return
+    
+    # Get file stats using os.stat()
+    file_stats = os.stat(file_path)
+    
+    # 1. File size (in bytes)
+    file_size = file_stats.st_size
+    # Convert to KB (optional, for readability)
+    file_size_kb = file_size / 1024
+    
+    # 2. Last modification time (timestamp → readable format)
+    mod_timestamp = file_stats.st_mtime  # Unix timestamp (seconds since epoch)
+    mod_time = datetime.fromtimestamp(mod_timestamp).strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Print results
+    print(f"File: {file_path}")
+    print(f"Size: {file_size} bytes ({file_size_kb:.2f} KB)")
+    print(f"Last Modified: {mod_time}")
 
-    for root, dirs, files in os.walk(directory):
-        total_file_count += len(files) 
-    return total_file_count
+# Test with a sample file (replace with your file path)
+# Use os.path.join for cross-platform compatibility
+sample_file = os.path.join(os.getcwd(), "test.txt")
+# Create a dummy test.txt if it doesn't exist (for testing)
+with open(sample_file, "w") as f:
+    f.write("Sample content for os module practice")
 
-if __name__ == "__main__":
-    target_directory = "." 
-    try:
-        count = count_total_files(target_directory)
-        print(f"Total number of files in {target_directory} (including subdirectories): {count}")
-    except FileNotFoundError:
-        print(f"Error: The directory {target_directory} does not exist.")
-    except NotADirectoryError:
-        print(f"Error: {target_directory} is not a valid directory (it is a file).")
+get_file_info(sample_file)
