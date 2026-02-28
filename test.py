@@ -1,30 +1,23 @@
 import os
 
-def change_working_dir(target_dir):
-    # Print initial CWD
-    print(f"Initial CWD: {os.getcwd()}")
-    
+def manage_env_vars():
+    # 1. Print the PATH environment variable
     try:
-        # Change to target directory
-        os.chdir(target_dir)
-        print(f"Success! New CWD: {os.getcwd()}")
-    except FileNotFoundError:
-        print(f"Error: Directory '{target_dir}' does not exist.")
-    except PermissionError:
-        print(f"Error: No permission to access '{target_dir}'.")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
+        path_var = os.environ["PATH"]
+        print("=== PATH Environment Variable ===")
+        # Split PATH into individual entries (easier to read)
+        path_entries = path_var.split(os.pathsep)  # os.pathsep = ; (Windows) / : (macOS/Linux)
+        for i, entry in enumerate(path_entries, 1):
+            print(f"{i}. {entry}")
+    except KeyError:
+        print("Error: PATH environment variable not found.")
 
-# Get user's Documents directory (cross-platform)
-# For Windows: C:/Users/[Name]/Documents
-# For macOS/Linux: /home/[Name]/Documents
-if os.name == "nt":  # Windows
-    documents_dir = os.path.join(os.environ["USERPROFILE"], "Documents")
-else:  # macOS/Linux
-    documents_dir = os.path.join(os.environ["HOME"], "Documents")
+    # 2. Add a temporary environment variable (only exists for the script's runtime)
+    os.environ["MY_VAR"] = "os_practice"
+    print("\n=== Custom Environment Variable ===")
+    print(f"MY_VAR: {os.environ['MY_VAR']}")
 
-# Test the function
-change_working_dir(documents_dir)
+    # Optional: Remove the custom env var (uncomment if needed)
+    # del os.environ["MY_VAR"]
 
-# Optional: Reset to original CWD (uncomment if needed)
-# os.chdir(original_cwd)
+manage_env_vars()
