@@ -1,4 +1,4 @@
-var = open("icpc/test.txt")
-var2 = var.readline()
-print(var2)
-var.close()
+with open("icpc/test.txt","r") as file:
+    file.seek(7)    
+    data = file.read(6)
+    print(data)
