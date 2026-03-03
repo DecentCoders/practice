@@ -3,19 +3,24 @@ def snake_water_game():
     options = { "w":"water","s":"snake", "g":"gun"}
     print("-------------Snake Water Gun-------------------")
     print(options)
-    choice =input("Enter your choice: ")
-    if choice not in options:
-        print("Invalid choice..Please choose s, w, or g.")
-        return
-    computer_choice = random.choice(["w","s","g"])
-    print(f"you choosen {choice}")
-    print(f'Computer chosed {computer_choice}')
-    if choice == computer_choice:
-        print("it's a draw..")
-    elif (choice == "s" and computer_choice =="w") or (choice == "g" and computer_choice =="s") or ( choice == "w"  and computer_choice == "g"):
-        print("Congratulation, You won..")
-    else:
-        print("Computer won, better luck next time")
+    outcomes = {
+        ("s","w"): "you win!",
+        ("g","s"): "you win!",
+        ("w","g"): "you win!",
+        ("w","s"): "Computer win!",
+        ("s","g"): "Computer win!",
+        ("g","w"): "Computer Win!"
+    }
+    user_score =0
+    cmp_score =0
+    while True:
+        user_choice =input("Enter your choice (or q to quite): ")
+        if user_choice == "q":
+            print("Quiting..")
+            break
+        computer_choice = random.choice(["s","g","w"])
+        print(f'your choice {user_choice} | computer choice {computer_choice}')
+        
     
 if __name__ == "__main__":
     snake_water_game()
