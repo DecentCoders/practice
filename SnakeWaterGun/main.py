@@ -22,7 +22,7 @@ def snake_water_game():
             print("Quiting..")
             break
         
-        computer_choice = random.choice(["s","g","w"])
+        computer_choice = random.choice(["s", "w", "g"])
         print(f'your choice - {user_choice} | computer choice - {computer_choice}')
         result = outcomes.get((user_choice,computer_choice),"It's a Draw..")
         print(result)
