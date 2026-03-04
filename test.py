@@ -1,33 +1,28 @@
 import os
+from datetime import datetime
 
-def rename_with_prefix_suffix(folder, add_prefix=True, prefix="vacation_", suffix="_2025"):
+def rename_by_creation_date(folder):
     if not os.path.isdir(folder):
         print(f"Error: {folder} does not exist!")
         return
     
     for filename in os.listdir(folder):
-        # Only process .jpg files from Problem 1
-        if filename.endswith(".jpg") and filename.startswith("photo_"):
-            # Split filename and extension (e.g., "photo_001.jpg" → ("photo_001", ".jpg"))
-            name, ext = os.path.splitext(filename)
-            
-            # Apply prefix/suffix
-            if add_prefix:
-                new_name = f"{prefix}{name}{ext}"
-            else:
-                new_name = f"{name}{suffix}{ext}"
-            
-            # Full paths
-            old_path = os.path.join(folder, filename)
-            new_path = os.path.join(folder, new_name)
+        file_path = os.path.join(folder, filename)
+        # Skip directories (only process files)
+        if os.path.isfile(file_path):
+            # Get creation time (st_ctime = creation time, st_mtime = modification time)
+            create_time = os.stat(file_path).st_ctime
+            # Convert timestamp to YYYY-MM-DD format
+            date_str = datetime.fromtimestamp(create_time).strftime("%Y-%m-%d")
+            # New filename: YYYY-MM-DD_filename.ext
+            new_filename = f"{date_str}_{filename}"
+            new_path = os.path.join(folder, new_filename)
             
             try:
-                os.rename(old_path, new_path)
-                print(f"Renamed: {filename} → {new_name}")
+                os.rename(file_path, new_path)
+                print(f"Renamed: {filename} → {new_filename}")
             except Exception as e:
                 print(f"Error renaming {filename}: {e}")
 
-# Test: Add prefix first, then suffix (uncomment one at a time)
-test_folder = "batch_rename_test"
-rename_with_prefix_suffix(test_folder, add_prefix=True)  # vacation_photo_001.jpg
-# rename_with_prefix_suffix(test_folder, add_prefix=False)  # photo_001_2025.jpg
+# Test
+rename_by_creation_date("batch_rename_test")
