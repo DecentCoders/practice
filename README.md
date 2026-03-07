@@ -1,1 +1,1 @@
-A repo for practicing python
+A repo for practicing python and its frameworks
