@@ -1,19 +1,31 @@
-class Circle:
-    PI = 3.1416  # Class constant (shared by all Circle instances)
-    
-    def __init__(self, radius):
-        self.radius = radius
+class BankAccount:
+    def __init__(self, initial_balance=0):
+        self.__balance = initial_balance  # Private attribute (encapsulation)
 
-    # Calculate area (πr²)
-    def area(self):
-        return self.PI * (self.radius **2)
+    # Deposit money (validate positive amount)
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+            print(f"Deposited ${amount}. New balance: ${self.__balance}")
+        else:
+            print("Error: Deposit amount must be positive!")
 
-    # Calculate circumference (2πr)
-    def circumference(self):
-        return 2 * self.PI * self.radius
+    # Withdraw money (validate sufficient balance)
+    def withdraw(self, amount):
+        if 0 < amount <= self.__balance:
+            self.__balance -= amount
+            print(f"Withdrew ${amount}. New balance: ${self.__balance}")
+        else:
+            print("Error: Invalid withdrawal amount (insufficient balance or negative)!")
+
+    # Getter method to access private balance (controlled access)
+    def get_balance(self):
+        return self.__balance
 
 # Test
-circle1 = Circle(5)
-print(f"Circle Radius: {circle1.radius}")
-print(f"Area: {circle1.area():.2f}")  # Output: 78.54
-print(f"Circumference: {circle1.circumference():.2f}")  # Output: 31.42
+account = BankAccount(100)
+account.deposit(50)  # Balance: 150
+account.withdraw(75) # Balance: 75
+account.withdraw(100) # Error (insufficient balance)
+print(f"Final Balance: ${account.get_balance()}")  # 75
+# print(account.__balance) → Error (private attribute cannot be accessed directly)
