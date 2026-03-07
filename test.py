@@ -1,24 +1,19 @@
-class Student:
-    # Constructor: Initialize student attributes
-    def __init__(self, name, age, grade):
-        self.name = name  # Public attribute
-        self.age = age
-        self.grade = grade
+class Circle:
+    PI = 3.1416  # Class constant (shared by all Circle instances)
+    
+    def __init__(self, radius):
+        self.radius = radius
 
-    # Method to display student info
-    def show_info(self):
-        print(f"Name: {self.name}, Age: {self.age}, Grade: {self.grade}")
+    # Calculate area (πr²)
+    def area(self):
+        return self.PI * (self.radius **2)
 
-    # Method to check if student passed
-    def is_passed(self):
-        return self.grade >= 60
+    # Calculate circumference (2πr)
+    def circumference(self):
+        return 2 * self.PI * self.radius
 
-# Test the class
-student1 = Student("Alice", 18, 85)
-student2 = Student("Bob", 17, 55)
-
-student1.show_info()  # Output: Name: Alice, Age: 18, Grade: 85
-print(f"{student1.name} Passed? {student1.is_passed()}")  # True
-
-student2.show_info()  # Output: Name: Bob, Age: 17, Grade: 55
-print(f"{student2.name} Passed? {student2.is_passed()}")  # False
+# Test
+circle1 = Circle(5)
+print(f"Circle Radius: {circle1.radius}")
+print(f"Area: {circle1.area():.2f}")  # Output: 78.54
+print(f"Circumference: {circle1.circumference():.2f}")  # Output: 31.42
