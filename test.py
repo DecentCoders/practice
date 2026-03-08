@@ -1,10 +1,11 @@
-class person:
-    def __init__(self,name, occupation):
-        self.name = name
-        self.occupation = occupation
-    def info(self):
-        print(f"{self.name} is a {self.occupation}")
+def welcome(fx):
+    def mfx():
+        print("Welcome!")
+        fx()
+        print("Good Luck..")
+    return mfx
 
-
-a = person("hridoy","developer")
-a.info()
+@welcome
+def hello():
+    print(" hey i was welcomed")
+hello()  
