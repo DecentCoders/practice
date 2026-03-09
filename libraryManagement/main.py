@@ -4,7 +4,9 @@ while True:
     choices = [0,1,2,3]
     for i in range(len(options)):
         print(f'{i}:{options[i]}')
-    user_choice = input("Enter your choice(0-3): ")
-    if user_choice not in choices:
-        print("Invalid choice, try again!. \n")       
+    try:
+        user_choice = int(input("Enter your choice(0-3): "))
+    except:
+        print("Invalid choice, try again")
+
         
