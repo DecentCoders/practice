@@ -7,4 +7,4 @@ def avail_books():
             for line in avail_books_list:
                 print(line.strip())
     except:
-        print("something is wrong")
+        print(f"{colors.RED}something is wrong {colors.RESET}")
