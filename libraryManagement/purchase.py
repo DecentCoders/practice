@@ -1,3 +1,4 @@
+import colors
 def purchase_books():
-    print("----Purchase  books---")
+    print(f"{colors.GREEN}----Purchase  books---{colors.RESET}")
     

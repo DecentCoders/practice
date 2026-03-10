@@ -1,2 +1,3 @@
-Book name-Page Number: - price:
-book1-Page Number: 128 - Price: 50USD 
+Book name ~ Page ~ Price (USD)
+qq ~ 11page ~ Price: 12USD 
+aa ~ 12page ~ Price: 12USD 
