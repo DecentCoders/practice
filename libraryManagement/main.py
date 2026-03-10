@@ -8,21 +8,21 @@ BLUE = "\033[1;34m"
 YELLOW = "\033[1;33m"    
 PURPLE = "\033[1;35m"    
 RESET = "\033[0m"        
-print("----Welcome to Hridoy's Library----")
+print(f"{GREEN}----Welcome to Hridoy's Library----{RESET}")
 while True:
     options =["Available books","Purchase Book", "Sell Book","Exit"]
-    print("----Menu----")
+    print(f"{BLUE}----Menu----{RESET}")
     for i,option in enumerate(options):
-        print(f'{i+1}: {option}')
+        print(f'{YELLOW}{i+1}:{RESET} {PURPLE}{option}{RESET}')
         
     try:
-        user_choice = int(input("Enter your choice(0-3): "))
+        user_choice = int(input(f"{BLUE}Enter your choice(0-3): {RESET}"))
     except ValueError:
-        print("\n Invalid choice, try again. \n")
+        print(f"\n {RED}Invalid choice, try again. {RESET}\n")
         continue
  
     if user_choice < 0 or user_choice> len(options) :
-        print("\n Invalid choice, Please select from menu\n")
+        print(f"\n {RED}Invalid choice, Please select from menu {RESET}\n")
         continue
     elif user_choice == 1:
         books.avail_books()
@@ -31,6 +31,6 @@ while True:
     elif user_choice ==3:
         sell.sell_books()
     else:
-        print("Exiting...")
+        print(f"{RED}Exiting...{RESET}")
         break
     
