@@ -1,28 +1,22 @@
 import books
 import purchase
 import sell
-#Color codes 
-RED = "\033[1;31m"      
-GREEN = "\033[1;32m"     
-BLUE = "\033[1;34m"      
-YELLOW = "\033[1;33m"    
-PURPLE = "\033[1;35m"    
-RESET = "\033[0m"        
-print(f"{GREEN}----Welcome to Hridoy's Library----{RESET}")
+import colors
+print(f"{colors.GREEN}----Welcome to Hridoy's Library----{colors.RESET}")
 while True:
     options =["Available books","Purchase Book", "Sell Book","Exit"]
-    print(f"{BLUE}----Menu----{RESET}")
+    print(f"{colors.BLUE}----Menu----{colors.RESET}")
     for i,option in enumerate(options):
-        print(f'{YELLOW}{i+1}:{RESET} {PURPLE}{option}{RESET}')
+        print(f'{colors.YELLOW}{i+1}:{colors.RESET} {colors.PURPLE}{option}{colors.RESET}')
         
     try:
-        user_choice = int(input(f"{BLUE}Enter your choice(0-3): {RESET}"))
+        user_choice = int(input(f"{colors.BLUE}Enter your choice(0-3): {colors.RESET}"))
     except ValueError:
-        print(f"\n {RED}Invalid choice, try again. {RESET}\n")
+        print(f"\n {colors.RED}Invalid choice, try again. {colors.RESET}\n")
         continue
  
     if user_choice < 0 or user_choice> len(options) :
-        print(f"\n {RED}Invalid choice, Please select from menu {RESET}\n")
+        print(f"\n {colors.RED}Invalid choice, Please select from menu {colors.RESET}\n")
         continue
     elif user_choice == 1:
         books.avail_books()
@@ -31,6 +25,6 @@ while True:
     elif user_choice ==3:
         sell.sell_books()
     else:
-        print(f"{RED}Exiting...{RESET}")
+        print(f"{colors.RED}Exiting...{colors.RESET}")
         break
     
