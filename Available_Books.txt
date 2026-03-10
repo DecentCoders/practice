@@ -1,1 +1,2 @@
-Book name-Page Number:
+Book name-Page Number: - price:
+book1-Page Number: 128 - Price: 50USD 
