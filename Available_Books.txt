@@ -1,3 +1,4 @@
 Book name ~ Page ~ Price (USD)
 qq ~ 11page ~ Price: 12USD 
 aa ~ 12page ~ Price: 12USD 
+aas ~ 12page ~ Price: 1USD 

@@ -25,10 +25,10 @@ def sell_books():
         try:
             price = int(input(f"{colors.PURPLE}Price (USD): {colors.RESET}"))
             if price <0:
-                print(f"{colors.RED}Price cant be negative number ")
+                print(f"{colors.RED}Price cant be negative number {colors.RESET}")
                 continue
         except ValueError:
-            print(f"price must be a integer number{colors.RESET}")
+            print(f"{colors.RED}price must be a integer number{colors.RESET}")
             continue
         
         book_exist = False
@@ -42,7 +42,7 @@ def sell_books():
                         book_exist = True
                         break
                 if book_exist:
-                   print(f"{colors.YELLOW}The Book {book_name} already exists. Try another one {colors.RESET}")
+                   print(f"{colors.RED}The Book {book_name} already exists. Try another one {colors.RESET}")
                 else:
                     book_entry= f'{book_name} ~ {page_number}page ~ Price: {price}USD \n'
                     file.write(book_entry)
