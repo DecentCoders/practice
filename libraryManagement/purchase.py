@@ -2,15 +2,26 @@ import colors
 def purchase_books():
     print(f"{colors.GREEN}----Purchase  books---{colors.RESET}")
     try:
-        with open("Available_Books.txt", 'r+') as file:
-            books = file.readlines()
-            books_filterd = books[1:]
-            print("Book name ~ Page ~ Price (USD)")
-            for index, book in enumerate(books_filterd,start=1):
-                print(f'{colors.YELLOW} {index}:{colors.RESET} {book.strip()}')
-            choose_book = int(input('Enter he name/index of the book you want to buy: '))
-            book_choosed = books_filterd[choose_book]
-            print(f'{colors.PURPLE}You choose to buy {book_choosed} {colors.RESET}')
+        with open("Available_Books.txt", 'r',encoding='utf-8') as file:
+            books = file.readlines()            
+            
+            all_lines= [line.strip() for line in (books) if line.strip()]
+            
+            if not all_lines:
+                print('Something went wrong')
+                return
+            
+            header = all_lines[0]
+            book_entries = all_lines[1:]
+            if not  book_entries:
+                print('Sorry, No Books available to purchase.')
+                return
+            
+            print(f'{colors.BLUE}{header}{colors.RESET}')
+            for idx, books in enumerate(book_entries,start=1):
+                print(f'{colors.YELLOW}{idx}:{colors.RESET} {books}')
+            
+            
     except Exception as e:
         print(e)
 if __name__ ==" __main__":
