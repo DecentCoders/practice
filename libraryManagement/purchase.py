@@ -47,7 +47,7 @@ def purchase_books():
                 print("purchase Cancelled..")
                 return
             updated_avail_list =[header]+[b for i,b in enumerate(book_entries) if i != choice_index]
-            with open('Available_Books.txt', 'w', encoding='utc-8') as file:
+            with open('Available_Books.txt', 'w', encoding='utf-8') as file:
                 file.write('\n'.join(updated_avail_list))
             with open("Booked_list.txt",'a+',encoding='utf-8') as file:
                 file.seek(0)
@@ -56,7 +56,7 @@ def purchase_books():
                 file.write(selected_book)
             print(f"\n{colors.GREEN}✅ Purchase confirmed!{colors.RESET}")
             print(f"📚 Book '{book_name}' has been purchased.")
-            print(f"🔄 Removed from Avalablefile and added to Booked file.")
+            print(f"🔄 Removed from Available file and added to Booked file.")
     except FileNotFoundError as e:
         print(f"{colors.RED}Error: File not found - {e.filename}{colors.RESET}")
     except PermissionError:
