@@ -39,12 +39,12 @@ def purchase_books():
                 return
                 
             while True:
-                confirm=input(f'Are you sure buying {book_name} with price {price} (yes or no): ')
+                confirm=input(f'{colors.YELLOW}Are you sure buying {book_name} with price {price} (yes or no): {colors.RESET}')
                 if confirm in ['yes','no']:
                     break
                 print(f"{colors.RED}Invalid input! Enter 'yes' or 'no'.{colors.RESET}")
             if confirm == "no":
-                print("purchase Cancelled..")
+                print(f"{colors.YELLOW}Purchase Cancelled..{colors.RESET}")
                 return
             updated_avail_list =[header]+[b for i,b in enumerate(book_entries) if i != choice_index]
             with open('Available_Books.txt', 'w', encoding='utf-8') as file:
@@ -55,8 +55,8 @@ def purchase_books():
                     file.write(header+'\n')
                 file.write(selected_book)
             print(f"\n{colors.GREEN}✅ Purchase confirmed!{colors.RESET}")
-            print(f"📚 Book '{book_name}' has been purchased.")
-            print(f"🔄 Removed from Available file and added to Booked file.")
+            print(f"📚 {colors.YELLOW}Book '{book_name}' has been purchased.{colors.RESET}")
+            print(f"🔄{colors.BLUE} Removed from Available file and added to Booked file. {colors.BLUE}")
     except FileNotFoundError as e:
         print(f"{colors.RED}Error: File not found - {e.filename}{colors.RESET}")
     except PermissionError:
