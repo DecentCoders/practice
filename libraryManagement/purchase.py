@@ -8,13 +8,13 @@ def purchase_books():
             all_lines= [line.strip() for line in (books) if line.strip()]
             
             if not all_lines:
-                print('Something went wrong')
+                print(f'{colors.RED}Something went wrong {colors.RESET}')
                 return
             
             header = all_lines[0]
             book_entries = all_lines[1:]
             if not  book_entries:
-                print('Sorry, No Books available to purchase.')
+                print(f'{colors.BLUE}Sorry, No Books available to purchase.{colors.RESET}')
                 return
             
             print(f'{colors.BLUE}{header}{colors.RESET}')
