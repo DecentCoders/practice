@@ -22,20 +22,20 @@ def purchase_books():
                 print(f'{colors.YELLOW}{idx}:{colors.RESET} {books}')
             while True:
                 try:
-                    user_choice =input("Enter the Desired books number: ").strip()
+                    user_choice =input(f"{colors.BLUE}Enter the Desired books number: {colors.RESET}").strip()
                     choice_index = int(user_choice) - 1
                     if 0 <= choice_index <= len(book_entries):
                         selected_book = book_entries[choice_index]
                         break
                     else:
-                        print(f'input number from 1 to {len(book_entries)}')
+                        print(f'{colors.RED}input number from 1 to {len(book_entries)}{colors.RESET}')
                 except ValueError:
-                    print("Please enter a valid number!")  
+                    print(f"{colors.RED}Please enter a valid number!{colors.RESET}")  
                          
             try:
                 book_name, pages, price = [part.strip() for part in selected_book.split("~")]
             except Exception as e:  
-                print(e)
+                print(f'{colors.RED}{e}{colors.RESET}')
                 return
                 
             while True:
