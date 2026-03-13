@@ -1,2 +1,2 @@
 Book name ~ Page ~ Price (USD)
-qq ~ 11 ~  12USD
+qq ~ 11 ~  12USDaa ~ 12 ~  12USD

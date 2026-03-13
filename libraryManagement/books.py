@@ -4,7 +4,7 @@ def avail_books():
     try:  
         with open ("Available_Books.txt","r") as file:
             avail_books_list = file.readlines()
-            for line in avail_books_list:
-                print(line.strip())
+            for index, line in enumerate(avail_books_list):
+                print(f'{colors.YELLOW}{index+1}: {colors.RESET}{line.strip()}')
     except:
         print(f"{colors.RED}something is wrong {colors.RESET}")

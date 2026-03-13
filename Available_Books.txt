@@ -1,3 +1,5 @@
 Book name ~ Page ~ Price (USD)
-aa ~ 12 ~  12USD
 aas ~ 12 ~  1USD
+adssd ~ 23 ~ 23USD 
+test ~ 11 ~ 22USD
+2 ~ 2 ~ 23USD

@@ -44,8 +44,8 @@ def sell_books():
                 if book_exist:
                    print(f"{colors.RED}The Book {book_name} already exists. Try another one {colors.RESET}")
                 else:
-                    book_entry= f'{book_name} ~ {page_number} ~ {price}USD \n'
-                    file.write(book_entry)
+                    book_entry= f'{book_name} ~ {page_number} ~ {price}USD'
+                    file.write(f'{book_entry}\n')
                     print(f"{colors.GREEN}{book_name} added to the inventory {colors.RESET}")
                     break       
         except Exception as e:
